@@ -1,4 +1,4 @@
-from battery import *
+from battery import Battery
 from time import sleep
 
 

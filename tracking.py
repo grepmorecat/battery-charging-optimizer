@@ -6,3 +6,5 @@ class Tracking():
         self.discharging_time = 0
         self.charging_time = 0
         self.range_remain = b.range
+
+# should write to file
