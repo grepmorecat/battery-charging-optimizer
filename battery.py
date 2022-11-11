@@ -2,9 +2,11 @@ import subprocess
 
 
 class Battery:
-    def __init__(self):
-        self.range = 0.6  # r22.2
-        self.lowest_level = 0.1  # t8
+    states = {
+        "Charging": 1,
+        "Not charging": 2,
+        "Discharging": 3
+    }
 
     @classmethod
     def _read_battery(cls) -> [float, str]:
@@ -19,8 +21,15 @@ class Battery:
         state = battery_status[1].strip()
         return [level, state]
 
+    def __init__(self):
+        self.range = 0.6  # r22.2
+        self.lowest_level = 0.1  # t8
+
     def get_state_str(self) -> str:
         return self._read_battery()[1]
+
+    def get_state_code(self) -> int:
+        return self.states[self.get_state_str()]
 
     def get_level(self) -> float:
         return self._read_battery()[0]
@@ -34,3 +43,4 @@ if __name__ == "__main__":
     print(b.get_level())
     print(b.get_ratioed_level())
     print(b.get_state_str())
+    print(b.get_state_code())
