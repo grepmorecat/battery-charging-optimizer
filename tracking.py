@@ -2,11 +2,26 @@ from battery import Battery
 
 
 class Tracking:
+    """
+    for tracking sampled data, calculating range,
+    storing data to history_test.json file
+    """
     def __init__(self, battery: Battery):
         self.battery = battery
         self.discharging_time = 0
         self.charging_time = 0
         self.range_remain = battery.range
+        self.last_sample_time = None
+
+    def write_history(self):
+        pass
+
+    def read_history(self):
+        pass
+
+    def increase_time(self):
+        pass
+
 
     def track(self):
         if self.battery.get_state_str() == "Discharging":

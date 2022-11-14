@@ -1,4 +1,6 @@
 import subprocess
+import json
+import time
 
 
 class Battery:
@@ -19,11 +21,20 @@ class Battery:
         battery_status = battery_status.replace(":", ",", 1).split(",")
         level = float(battery_status[2].strip()[:-1])
         state = battery_status[1].strip()
-        return [level, state]
+        timestamp = time.time()
+        return [level, state, timestamp]
 
     def __init__(self):
+        # check if history file exist
+        with open("history.json") as history_file:
+            history = json.load(history_file)
+            self.range = history["range"]
+        #
         self.range = 0.6  # r22.2
         self.lowest_level = 0.1  # t8
+
+    # def get_sample(self):
+    #     return
 
     def get_state_str(self) -> str:
         return self._read_battery()[1]
