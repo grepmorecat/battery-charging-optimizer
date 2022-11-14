@@ -3,6 +3,7 @@ import json
 import time
 from threading import Thread
 
+
 # TODO how to exit elegantly?
 class Tracking:
     """
@@ -31,7 +32,13 @@ class Tracking:
         self.range_remain = self.range
         self.discharging_time = 0
 
+    def is_discharging(self) -> bool:
+        return True if self.current_state == "Discharging" else False
+
     def write_history(self):
+        """
+        write current status into history.json file on disk
+        """
         # TODO check validate?
         d = {
             "timestamp": self.timestamp,
@@ -41,84 +48,56 @@ class Tracking:
         j = json.dumps(d, indent=2)
         with open("history.json", "w") as outfile:
             outfile.write(j)
-    def update(self):
-        self.current_level, self.current_state, self.timestamp = self.battery.get_info()
-        # TODO calc
 
-    def _tracking(self, interval:int):
+    def update(self):
+        """
+        sample the current battery status, and do calculation based on condition
+        """
+        previous_time = self.timestamp
+        previous_level = self.current_level
+        self.current_level, self.current_state, self.timestamp = self.battery.get_info()
+        # update
+        if self.is_discharging():
+            self.range_remain -= previous_level - self.current_level
+            self.discharging_time += self.timestamp - previous_time
+        # if remain_range reaches zero, recalculate range
+        if self.range_remain <= 0:
+            if self.discharging_time < self.previous_discharging_time * 0.9:
+                self.range = self.range + 5 if self.range + 5 <= 100 else 100
+            elif self.discharging_time > self.previous_discharging_time * 1.1:
+                self.range = self.range - 5 if self.range - 5 >= 50 else 50
+            # reset discharging_time, range_remain
+            self.previous_discharging_time = self.discharging_time
+            self.discharging_time = 0
+            self.range_remain = self.range
+
+    def _tracking(self, interval: int):
         while 1:
             self.update()
-            # TODO calc
-
             time.sleep(interval)
 
-    def _saving_history(self, interval:int):
+    def _saving_history(self, interval: int):
         while 1:
             self.write_history()
             time.sleep(interval)
 
-    def start_tracking(self, interval:int):
+    def start_tracking(self, interval: int):
         """
         create thread for tracking battery info
         :param: interval:int
         """
         Thread(target=self._tracking, args=(interval,)).start()
 
-    def start_saving_history(self, interval:int):
+    def start_saving_history(self, interval: int):
         """
         create thread for saving history to file
         :param: interval:int
         """
         Thread(target=self._saving_history, args=(interval,)).start()
 
-    #
-    # def track(self):
-    #     if self.battery.get_state_str() == "Discharging":
-    #         self.discharging_time += 1
-    #         self.range_remain -= 0.01
-    #     elif self.battery.get_state_str() == "Charging":
-    #         self.charging_time += 1
-    #         self.range_remain += 0.01
-    #     else:
-    #         pass
-    #
-    #     print("Discharging time: ", self.discharging_time)
-    #     print("Charging time: ", self.charging_time)
-    #     print("Range remain: ", self.range_remain)
-    #     print("Battery level: ", self.battery.get_level())
-    #     print("Battery ratioed level: ", self.battery.get_ratioed_level())
-    #     print("Battery state: ", self.battery.get_state_str())
-    #     print("Battery state code: ", self.battery.get_state_code())
-
-    # def get_discharging_time(self):
-    #     return self.discharging_time
-    #
-    # def get_charging_time(self):
-    #     return self.charging_time
-    #
-    # def get_range_remain(self):
-    #     return self.range_remain
-    #
-    # def get_battery_level(self):
-    #     return self.battery.get_level()
-    #
-    # def get_battery_ratioed_level(self):
-    #     return self.battery.get_ratioed_level()
-    #
-    # def get_battery_state_str(self):
-    #     return self.battery.get_state_str()
-    #
-    # def get_battery_state_code(self):
-    #     return self.battery.get_state_code()
-    #
-    # def reset(self):
-    #     self.discharging_time = 0
-    #     self.charging_time = 0
-    #     self.range_remain = self.battery.range
-
 
 if __name__ == "__main__":
     t = Tracking(Battery())
     t.write_history()
     t.start_tracking(1)
-    t.start_saving_history(2)
+    t.start_saving_history(10)
