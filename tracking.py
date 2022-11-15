@@ -20,15 +20,23 @@ class Tracking:
         self.discharging_time = None
         self.previous_discharging_time = None
 
-        with open("history_demo.json") as history_file:
+        with open("history.json") as history_file:
             history = json.load(history_file)
 
-        self.previous_discharging_time = history["previous_discharging_time"] if history[
-            "previous_discharging_time"] else None  # if no valid previous discharging time, will be None
 
-        self.range = history["range"] if time.time() - history["timestamp"] <= 604800 else self.default_range
-        # keep range if history is in 7 days, but restart calculating discharging_time
-        # otherwise, reset policy to default
+        if history["previous_discharging_time"]:
+            self.previous_discharging_time = history["previous_discharging_time"]
+        else:
+            self.previous_discharging_time = None
+
+        if (time.time() - history["timestamp"] <= 604800):
+            self.range = history["range"]
+        else:
+            self.range = self.default_range
+            # print("range reset to 60, due to timestamp expired")
+            # keep range if history is in 7 days, but restart calculating discharging_time
+            # otherwise, reset policy to default
+
         self.range_remain = self.range
         self.discharging_time = 0
 
@@ -94,6 +102,8 @@ class Tracking:
         :param: interval:int
         """
         Thread(target=self._saving_history, args=(interval,)).start()
+
+
 
 
 if __name__ == "__main__":
