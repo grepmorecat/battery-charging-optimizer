@@ -20,17 +20,45 @@ class Tracking:
         self.discharging_time = None
         self.previous_discharging_time = None
 
-        with open("history_demo.json") as history_file:
+        self.flag_exit = 0
+        self.flag_bypass = 0
+
+        # TODO check file exist?
+        with open("history.json") as history_file:
             history = json.load(history_file)
 
-        self.previous_discharging_time = history["previous_discharging_time"] if history[
-            "previous_discharging_time"] else None  # if no valid previous discharging time, will be None
+        if history["previous_discharging_time"]:
+            self.previous_discharging_time = history["previous_discharging_time"]
+        else:
+            self.previous_discharging_time = None
 
-        self.range = history["range"] if time.time() - history["timestamp"] <= 604800 else self.default_range
-        # keep range if history is in 7 days, but restart calculating discharging_time
-        # otherwise, reset policy to default
+        if time.time() - history["timestamp"] <= 604800:
+            self.range = history["range"]
+        else:
+            self.range = self.default_range
+            # print("range reset to 60, due to timestamp expired")
+            # keep range if history is in 7 days, but restart calculating discharging_time
+            # otherwise, reset policy to default
+
         self.range_remain = self.range
         self.discharging_time = 0
+        self.set_auto()
+
+    def get_range(self):
+        return int(self.range) if self.flag_bypass == 0 else 100
+
+    def set_bypass(self):
+        self.flag_bypass = 1
+    def set_auto(self):
+        self._reset_discharging_timer(self.previous_discharging_time)
+        self.flag_bypass = 0
+        self._start_tracking(1)
+        self._start_saving_history(10)
+
+    def _reset_discharging_timer(self, new_previous_discharging_time:float):
+        self.previous_discharging_time = new_previous_discharging_time
+        self.discharging_time = 0
+        self.range_remain = self.range
 
     def is_discharging(self) -> bool:
         return True if self.current_state == "Discharging" else False
@@ -66,29 +94,27 @@ class Tracking:
                 self.range = self.range + 5 if self.range + 5 <= 100 else 100
             elif self.discharging_time > self.previous_discharging_time * 1.1:
                 self.range = self.range - 5 if self.range - 5 >= 50 else 50
-            # reset discharging_time, range_remain
-            self.previous_discharging_time = self.discharging_time
-            self.discharging_time = 0
-            self.range_remain = self.range
+            # reset discharging timer, range remain
+            self._reset_discharging_timer(self.discharging_time)
 
     def _tracking(self, interval: int):
-        while 1:
+        while self.flag_bypass == 0:
             self.update()
             time.sleep(interval)
 
     def _saving_history(self, interval: int):
-        while 1:
+        while self.flag_bypass == 0:
             self.write_history()
             time.sleep(interval)
 
-    def start_tracking(self, interval: int):
+    def _start_tracking(self, interval: int):
         """
         create thread for tracking battery info
         :param: interval:int
         """
         Thread(target=self._tracking, args=(interval,)).start()
 
-    def start_saving_history(self, interval: int):
+    def _start_saving_history(self, interval: int):
         """
         create thread for saving history to file
         :param: interval:int
@@ -98,6 +124,14 @@ class Tracking:
 
 if __name__ == "__main__":
     t = Tracking(Battery())
-    t.write_history()
-    t.start_tracking(1)
-    t.start_saving_history(10)
+    import time
+    print(t.get_range())
+    time.sleep(2)
+    t.set_bypass()
+    time.sleep(1)
+    print(t.get_range())
+    t.set_auto()
+    time.sleep(1)
+    print(t.get_range())
+
+
