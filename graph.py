@@ -68,6 +68,10 @@ data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 19, 19, 20]
 graph = Graph(root, 600, 400, 'white', 20, 20, 'Time', 'Level', 'Power Level over Time', data)
 graph.pack()
 root.mainloop()
+# import time
+# time.sleep(2)
+# data[0] = 2
+# # graph.pack()
 
 
 
