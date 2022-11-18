@@ -1,82 +1,34 @@
-import tkinter
-from queue import Queue
-import time
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import collections
 
-class Graph(tkinter.Canvas):
-    def __init__(self, master, width, height, bg, x_axis, y_axis, x_title, y_title, title, data):
-        tkinter.Canvas.__init__(self, master, width=width, height=height, bg=bg)
-        self.width = width
-        self.height = height
-        self.bg = bg
-        self.x_axis = x_axis
-        self.y_axis = y_axis
-        self.x_title = x_title
-        self.y_title = y_title
-        self.title = title
-        self.data = data
-        self.create_graph()
-
-    def create_graph(self):
-        # self.create_rectangle(0, 0, self.width, self.height, fill=self.bg)
-        # y坐标轴
-        self.create_line(50, 50, 50, self.height - 50, width=2)
-        # x坐标轴
-        self.create_line(50, self.height - 50, self.width - 50, self.height - 50, width=2)
-        # text
-        self.create_text(50, 25, text=self.title, anchor=tkinter.W)
-        # y轴text
-        self.create_text(20, self.height - 370, text=self.y_title, anchor=tkinter.W)
-        # x轴text
-        self.create_text(self.width - 50, self.height - 15, text=self.x_title, anchor=tkinter.W)
-        self.create_text(self.width - 25, 50, text='monitor', anchor=tkinter.E)
-        self.create_text(self.width / 2, 25, text='Battery level Graph', anchor=tkinter.CENTER)
-
-        # Draw the x-axis labels
-        time.time()
-        q = Queue(maxsize=20)
-        for i in range(0, 21):
-            q.put(i)
-        for i in range(0, 21):
-            print(q.get())
-
-        x_step = (self.width - 100) / self.x_axis
-        '''for i in range(0, self.x_axis + 1):
-            self.create_line(50 + i * x_step, self.height - 50, 50 + i * x_step, self.height - 45, width=2)
-            self.create_text(50 + i * x_step, self.height - 35, text=str(i), anchor=tkinter.N)'''
+from battery import Battery
 
 
-        # Draw the y-axis labels
-        y_step = (self.height - 100) / self.y_axis
-        '''for i in range(0, self.y_axis + 1):
-            self.create_line(50, self.height - 50 - i * y_step, 45, self.height - 50 - i * y_step, width=2)
-            self.create_text(35, self.height - 50 - i * y_step, text=str(i), anchor=tkinter.E)'''
-
-        # Draw the data
-        for i in range(0, len(self.data)):
-            x = 50 + i * x_step
-            y = self.height - 50 - self.data[i] * y_step
-            self.create_oval(x - 2, y - 2, x + 2, y + 2, fill='red', outline='red')
-            if i > 0:
-                self.create_line(50 + (i - 1) * x_step, self.height - 50 - self.data[i - 1] * y_step, x, y, width=2,
-                                 fill='red')
-
-
-root = tkinter.Tk()
-root.title('Graph')
-root.geometry('600x400')
-data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 19, 19, 20]
-graph = Graph(root, 600, 400, 'white', 20, 20, 'Time', 'Level', 'Power Level over Time', data)
-graph.pack()
-root.mainloop()
-# import time
-# time.sleep(2)
-# data[0] = 2
-# # graph.pack()
+# function to update the data
+def graph_setup(interval):
+    history_queue.popleft()
+    history_queue.append(battery.get_info()[0])
+    # clear axis
+    ax.cla()
+    # plot cpu
+    # todo: fill with time stamps
+    # x = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
+    x = [i for i in range(20)]
+    ax.plot(history_queue)
+    ax.scatter(len(history_queue) - 1, history_queue[-1])
+    ax.text(len(history_queue) - 1, history_queue[-1] + 2, "{}%".format(history_queue[-1]))
+    ax.set_ylim(0, 100)
+    plt.xticks(x)
 
 
-
-
-
-
-
-
+# start collections with zeros
+battery = Battery()
+history_queue = collections.deque([0] * 20, maxlen=20)
+# define and adjust figure
+fig = plt.figure(figsize=(12, 6), facecolor='#DEDEDE')
+ax = plt.subplot(111)
+ax.set_facecolor('#DEDEDE')
+# animate
+ani = FuncAnimation(fig, graph_setup, interval=500)
+plt.show()
