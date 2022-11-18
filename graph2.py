@@ -1,37 +1,33 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.animation import FuncAnimation
-import psutil
 import collections
+
+from battery import Battery
+
+
 # function to update the data
 def my_function(i):
-    # get data
-    cpu.popleft()
-    cpu.append(psutil.cpu_percent())
-    ram.popleft()
-    ram.append(psutil.virtual_memory().percent)
+    history_queue.popleft()
+    history_queue.append(battery.get_info()[0])
     # clear axis
     ax.cla()
-    ax1.cla()
     # plot cpu
-    ax.plot(cpu)
-    ax.scatter(len(cpu)-1, cpu[-1])
-    ax.text(len(cpu)-1, cpu[-1]+2, "{}%".format(cpu[-1]))
-    ax.set_ylim(0,100)
-    # plot memory
-    ax1.plot(ram)
-    ax1.scatter(len(ram)-1, ram[-1])
-    ax1.text(len(ram)-1, ram[-1]+2, "{}%".format(ram[-1]))
-    ax1.set_ylim(0,100)
+    # todo: fill with time stamps
+    x = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
+    ax.plot(history_queue)
+    ax.scatter(len(history_queue) - 1, history_queue[-1])
+    ax.text(len(history_queue) - 1, history_queue[-1] + 2, "{}%".format(history_queue[-1]))
+    ax.set_ylim(0, 100)
+    plt.xticks(x)
+
+
 # start collections with zeros
-cpu = collections.deque(np.zeros(10))
-ram = collections.deque(np.zeros(10))
+battery = Battery()
+history_queue = collections.deque([0] * 20, maxlen=20)
 # define and adjust figure
-fig = plt.figure(figsize=(12,6), facecolor='#DEDEDE')
-ax = plt.subplot(121)
-ax1 = plt.subplot(122)
+fig = plt.figure(figsize=(12, 6), facecolor='#DEDEDE')
+ax = plt.subplot(111)
 ax.set_facecolor('#DEDEDE')
-ax1.set_facecolor('#DEDEDE')
 # animate
 ani = FuncAnimation(fig, my_function, interval=1000)
 plt.show()
