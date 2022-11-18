@@ -85,6 +85,10 @@ class Graph:
         plt.text(0, 90, "Current Mode: " + self.tracker.get_mode(), fontsize=16,
                  color="C2" if self.tracker.get_mode() == "Auto" else "C1")
         plt.text(0, 80, "Current Level: " + str(info[0]) + "%", fontsize=16)
+        plt.text(0, 75, "Current Range: " + str(self.tracker.get_range()) + "%", fontsize=16)
+        plt.axhline(self.tracker.get_range())
+
+        plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
 
     def show(self):
         """
@@ -94,7 +98,7 @@ class Graph:
         # animate
         global ani
 
-        ani = FuncAnimation(self.fig, self.func, interval=100)
+        ani = FuncAnimation(self.fig, self.func, interval=800)
         """
         animate the graph
         """
