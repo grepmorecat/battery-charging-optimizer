@@ -61,6 +61,9 @@ class Tracker:
         self._start_tracking(1)
         self._start_saving(10)
 
+    def exit(self):
+        self.set_bypass()
+
     def _reset_discharging_timer(self, new_previous_discharging_time: float):
         self.previous_discharging_time = new_previous_discharging_time
         self.discharging_time = 0
@@ -107,11 +110,13 @@ class Tracker:
         while self.flag_bypass == 0:
             self.update()
             time.sleep(interval)
+        print(2)
 
     def _save(self, interval: int):
         while self.flag_bypass == 0:
             self.write_history()
             time.sleep(interval)
+        print(3)
 
     def _start_tracking(self, interval: int):
         """
