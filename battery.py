@@ -1,5 +1,6 @@
 import subprocess
 import time
+import control
 
 class Battery:
     def get_info(self) -> (int, str, float):
@@ -28,7 +29,7 @@ class Battery:
         timestamp = time.time()
         return (level, state, timestamp)
 
-    @controller.check_root
+    @control.check_root
     def _set_stop_threshold(self, level: int):
         """
         run bash command to set stop charging threshold of the system
