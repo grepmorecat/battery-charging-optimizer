@@ -1,9 +1,9 @@
-import datetime
+# import datetime
 import time
 from random import randint, uniform, random
 import threading
-import sqlite3
-import keyboard
+# import sqlite3
+# import keyboard
 
 '''
 gerSampling function generates reports of the battery
@@ -16,10 +16,9 @@ time.sleep(1) makes sure that each report is generated 1second apart
 '''
 
 
-class getSampling():
-    def __init__(self, range):
+class Battery():
+    def __init__(self, range=60):
         self.level = None
-        self.state = None
         self.time = None
         self.state = None
         self.keyboard = None
@@ -30,6 +29,9 @@ class getSampling():
     def __str__(self):
         batteryInfo = "Battery Level: {0}, Battery State: {1}, Time: {2}"
         return batteryInfo.format(self.level, self.state, self.time)
+
+    def set_threshold(self, threshold:int):
+        return
 
     def charge(self, states, maxRange):
         global batteryLevel
@@ -138,7 +140,7 @@ class getSampling():
 
 if __name__ == "__main__":
     defaultRange = 60
-    s = getSampling(defaultRange)
+    s = Battery(defaultRange)
     while (True):
         pluggedIn = False
         if keyboard.is_pressed(" "):

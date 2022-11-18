@@ -35,6 +35,7 @@ class Battery:
         run bash command to set stop charging threshold of the system
         :return:
         """
+        return
         import os
         if os.getuid() != 0:
             raise Exception("need to run at root privileges")
