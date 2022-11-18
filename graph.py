@@ -3,12 +3,14 @@ from matplotlib.animation import FuncAnimation
 import collections
 
 from battery import Battery
+from tracker import Tracker
 
 
-class Graph():
+class Graph:
 
-    def __init__(self, battery: Battery):
+    def __init__(self, battery: Battery, tracker: Tracker):
         # start collections with zeros
+        self.tracker = tracker
         self.battery = battery
         self.history_queue = collections.deque([0] * 20, maxlen=20)
         # define and adjust figure
