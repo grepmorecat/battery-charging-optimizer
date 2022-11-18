@@ -110,13 +110,11 @@ class Tracker:
         while self.flag_bypass == 0:
             self.update()
             time.sleep(interval)
-        print(2)
 
     def _save(self, interval: int):
         while self.flag_bypass == 0:
             self.write_history()
             time.sleep(interval)
-        print(3)
 
     def _start_tracking(self, interval: int):
         """

@@ -3,6 +3,7 @@ from matplotlib.animation import FuncAnimation
 from battery_simulated import Battery
 from tracker import Tracker
 import time
+import datetime
 
 """
     This is a graph of the data I plotted using Matplotlib for real-time battery monitoring
@@ -31,17 +32,11 @@ class Graph:
         self.time_queue = [0.0] * 20
         # define and adjust figure
         self.fig = plt.figure(figsize=(12, 6), facecolor='#DEDEDE')
-        """
-        create a figure with a size of 12 by 6 and a color of #DEDEDE
-        """
+        # create a figure with a size of 12 by 6 and a color of #DEDEDE
         self.ax = plt.subplot(1, 1, 1)
-        """
-        
-        create a subplot with 1 row and 1 column"""
+        # create a subplot with 1 row and 1 column
         self.ax.set_facecolor('#DEDEDE')
-        """
-        create a subplot with a color of #DEDED
-        E"""
+        # create a subplot with a color of #DEDEDE
 
     def func(self, interval):
         """
@@ -50,12 +45,14 @@ class Graph:
         :return: the updated graph
         """
         # function to update the data
+        info = self.battery.get_info()
+        self.history_queue.append(info[0])
         self.history_queue.pop(0)
-        self.history_queue.append(self.battery.get_info()[0])
-        self.time_queue.pop(0)
         self.time_queue.append(time.time())
+        self.time_queue.pop(0)
         # clear axis
         self.ax.cla()
+
         """
         pop the first element in the list and append the new data to the list
         clear the axis and plot the list again
@@ -66,7 +63,6 @@ class Graph:
         """
         create a list of numbers from 0 to 19
         """
-        import datetime
         labels = [datetime.datetime.fromtimestamp(i).strftime('%M:%S.%f')[:-5] for i in self.time_queue]
         """
         The labels are the time in minutes, seconds, and milliseconds
@@ -75,6 +71,7 @@ class Graph:
         self.ax.scatter(len(self.history_queue) - 1, self.history_queue[-1])
         self.ax.text(len(self.history_queue) - 1, self.history_queue[-1] + 2, "{}%".format(self.history_queue[-1]))
         self.ax.set_ylim(0, 100)
+
         """
         set the y-axis to be from 0 to 100
         """
@@ -85,6 +82,11 @@ class Graph:
         """
         # https://pythonguides.com/matplotlib-x-axis-label/#Matplotlib_x-axis_label_overlap
 
+        plt.text(0, 85, "Current State: " + info[1], fontsize=16, color="C2" if info[1] == "Charging" else "C1")
+        plt.text(0, 90, "Current Mode: " + self.tracker.get_mode(), fontsize=16,
+                 color="C2" if self.tracker.get_mode() == "Auto" else "C1")
+        plt.text(0, 80, "Current Level: " + str(info[0]) + "%", fontsize=16)
+
     def show(self):
         """
         show the graph
@@ -92,6 +94,7 @@ class Graph:
         """
         # animate
         global ani
+
         ani = FuncAnimation(self.fig, self.func, interval=100)
         """
         animate the graph
