@@ -5,7 +5,7 @@ from threading import Thread
 
 
 # TODO how to exit elegantly?
-class Tracking:
+class Tracker:
     """
     for tracking sampled data, calculating range,
     storing data to history.json file
@@ -47,15 +47,21 @@ class Tracking:
     def get_range(self):
         return int(self.range) if self.flag_bypass == 0 else 100
 
+    def get_mode(self) -> str:
+        return "Bypass" if self.flag_bypass else "Auto"
+
     def set_bypass(self):
         self.flag_bypass = 1
+        self.battery.set_threshold(100)
+
     def set_auto(self):
         self._reset_discharging_timer(self.previous_discharging_time)
         self.flag_bypass = 0
+        self.battery.set_threshold(self.range)
         self._start_tracking(1)
-        self._start_saving_history(10)
+        self._start_saving(10)
 
-    def _reset_discharging_timer(self, new_previous_discharging_time:float):
+    def _reset_discharging_timer(self, new_previous_discharging_time: float):
         self.previous_discharging_time = new_previous_discharging_time
         self.discharging_time = 0
         self.range_remain = self.range
@@ -97,12 +103,12 @@ class Tracking:
             # reset discharging timer, range remain
             self._reset_discharging_timer(self.discharging_time)
 
-    def _tracking(self, interval: int):
+    def _track(self, interval: int):
         while self.flag_bypass == 0:
             self.update()
             time.sleep(interval)
 
-    def _saving_history(self, interval: int):
+    def _save(self, interval: int):
         while self.flag_bypass == 0:
             self.write_history()
             time.sleep(interval)
@@ -112,19 +118,18 @@ class Tracking:
         create thread for tracking battery info
         :param: interval:int
         """
-        Thread(target=self._tracking, args=(interval,)).start()
+        Thread(target=self._track, args=(interval,)).start()
 
-    def _start_saving_history(self, interval: int):
+    def _start_saving(self, interval: int):
         """
         create thread for saving history to file
         :param: interval:int
         """
-        Thread(target=self._saving_history, args=(interval,)).start()
+        Thread(target=self._save, args=(interval,)).start()
 
 
 if __name__ == "__main__":
-    t = Tracking(Battery())
-    import time
+    t = Tracker(Battery())
     print(t.get_range())
     time.sleep(2)
     t.set_bypass()
@@ -133,5 +138,3 @@ if __name__ == "__main__":
     t.set_auto()
     time.sleep(1)
     print(t.get_range())
-
-

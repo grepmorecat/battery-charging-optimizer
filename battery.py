@@ -1,6 +1,6 @@
 import subprocess
 import time
-import control
+
 
 class Battery:
     def get_info(self) -> (int, str, float):
@@ -9,12 +9,11 @@ class Battery:
         """
         return self._read_battery()
 
-    def set_threshold(self, level:int):
+    def set_threshold(self, level: int):
         self._set_stop_threshold(level)
 
     def get_threshold(self):
         return self._get_stop_threshold()
-
 
     def _read_battery(self) -> (int, str, float):
         """
@@ -29,13 +28,15 @@ class Battery:
         timestamp = time.time()
         return (level, state, timestamp)
 
-    @control.check_root
     def _set_stop_threshold(self, level: int):
         """
         run bash command to set stop charging threshold of the system
         :return:
         """
-        # need error handling
+        import os
+        if os.getuid() != 0:
+            raise Exception("need to run at root privileges")
+        # check root privileges
         command = "echo %d > /sys/class/power_supply/BAT0/charge_stop_threshold" % (int(level),)
         subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).stdout.read()
         # p = subprocess.Popen("cat /sys/class/power_supply/BAT0/charge_stop_threshold", shell=True, stdout=subprocess.PIPE)
