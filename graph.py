@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import collections
 
-from battery import Battery
+from battery_simulated import Battery
 from tracker import Tracker
 
 
