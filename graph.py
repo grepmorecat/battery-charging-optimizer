@@ -5,16 +5,15 @@ from tracker import Tracker
 import time
 import datetime
 
-"""
-    This is a graph of the data I plotted using Matplotlib for real-time battery monitoring
-    The graph is animated using FuncAnimation, which is a function that takes in a time interval
-    The function that is passed in is the update function, which updates the graph every 1000 milliseconds.
-    The graph is updated by appending the new data to the list and then plotting the list and clearing it,
-    the graph is animated by clearing the graph and then plotting the list again
-"""
-
 
 class Graph:
+    """
+        This is a graph of the data I plotted using Matplotlib for real-time battery monitoring
+        The graph is animated using FuncAnimation, which is a function that takes in a time interval
+        The function that is passed in is the update function, which updates the graph every 1000 milliseconds.
+        The graph is updated by appending the new data to the list and then plotting the list and clearing it,
+        the graph is animated by clearing the graph and then plotting the list again
+    """
 
     def __init__(self, battery: Battery, tracker: Tracker):
         """
