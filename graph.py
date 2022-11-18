@@ -1,9 +1,6 @@
-'''Create a class and use tkinter to create a window that displays an icon that is a line graph with the x-axis representing the time and the y-axis representing the power level
-'''
 import tkinter
-from tkinter import *
-from tkinter import ttk
-
+from queue import Queue
+import time
 
 class Graph(tkinter.Canvas):
     def __init__(self, master, width, height, bg, x_axis, y_axis, x_title, y_title, title, data):
@@ -35,17 +32,24 @@ class Graph(tkinter.Canvas):
         self.create_text(self.width / 2, 25, text='Battery level Graph', anchor=tkinter.CENTER)
 
         # Draw the x-axis labels
+        time.time()
+        q = Queue(maxsize=20)
+        for i in range(0, 21):
+            q.put(i)
+        for i in range(0, 21):
+            print(q.get())
 
         x_step = (self.width - 100) / self.x_axis
-        for i in range(0, self.x_axis + 1):
+        '''for i in range(0, self.x_axis + 1):
             self.create_line(50 + i * x_step, self.height - 50, 50 + i * x_step, self.height - 45, width=2)
-            self.create_text(50 + i * x_step, self.height - 35, text=str(i), anchor=tkinter.N)
+            self.create_text(50 + i * x_step, self.height - 35, text=str(i), anchor=tkinter.N)'''
+
 
         # Draw the y-axis labels
         y_step = (self.height - 100) / self.y_axis
-        for i in range(0, self.y_axis + 1):
+        '''for i in range(0, self.y_axis + 1):
             self.create_line(50, self.height - 50 - i * y_step, 45, self.height - 50 - i * y_step, width=2)
-            self.create_text(35, self.height - 50 - i * y_step, text=str(i), anchor=tkinter.E)
+            self.create_text(35, self.height - 50 - i * y_step, text=str(i), anchor=tkinter.E)'''
 
         # Draw the data
         for i in range(0, len(self.data)):
