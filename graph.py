@@ -42,5 +42,7 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph(Battery())
+    b = Battery()
+    t = Tracker(b)
+    g = Graph(b, t)
     g.show()
