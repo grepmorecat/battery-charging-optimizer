@@ -78,7 +78,7 @@ class Graph:
                  color="C2" if self.tracker.get_mode() == "Auto" else "C1")
         plt.text(0, 80, "Level: " + str(info[0]) + "%", fontsize=16)
 
-        plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
+        # plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
 
     def show(self):
         """
@@ -86,16 +86,18 @@ class Graph:
         :return:
         """
         global ani
-        ani = FuncAnimation(self.fig, self.func, interval=800)
+        ani = FuncAnimation(self.fig, self.func, interval=200)
         # animate the graph
         plt.show()
 
 
 if __name__ == "__main__":
     b = Battery()
+    b.set_workload(5)
     t = Tracker(b)
     g = Graph(b, t)
+
     g.show()
-    print(111)
-    print("exiting")
+    b.exit()
     t.exit()
+    print("exiting")

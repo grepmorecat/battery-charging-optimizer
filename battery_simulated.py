@@ -14,12 +14,26 @@ class Battery():
         self.range = range
         self.lowerThreshold = None
         self.upperThreshold = None
+        self.flag_exit = 0
+        self.workload = 5
         backgroundProcess = threading.Thread(target=self.samplingSimulator)
         backgroundProcess.start()
 
     def __str__(self):
         batteryInfo = "Battery Level: {0}, Battery State: {1}, Time: {2}"
         return batteryInfo.format(self.level, self.state, self.time)
+
+    def exit(self):
+        self.flag_exit = 1
+        # pass
+    def set_threshold(self, threshold):
+        self.set_upperThreshold(threshold)
+
+    def get_threshold(self):
+        return self.upperThreshold
+
+    def set_workload(self, i:int):
+        self.workload = i
 
     def set_upperThreshold(self, threshold):
         self.upperThreshold = threshold
@@ -39,9 +53,9 @@ class Battery():
             self._setState(states)
             self._setTime(time.time())
             counter += 1
-            charge = randint(1, 2)
+            charge = randint(6, 10)
             batteryLevel += charge
-            time.sleep(1)
+            time.sleep(0.2)
             if (batteryLevel >= upperThreshold):
                 condition1 = False
         return
@@ -57,9 +71,9 @@ class Battery():
             self._setLevel(batteryLevel)
             self._setState(states)
             self._setTime(time.time())
-            discharge = randint(1, 2)
+            discharge = self.workload + randint(-1, 1)
             batteryLevel -= discharge
-            time.sleep(1)
+            time.sleep(0.2)
             if (batteryLevel <= lowerThreshold):
                 condition2 = False
         return
@@ -85,7 +99,7 @@ class Battery():
         self.lowerThreshold = (100 - self.range) / 2
         states = ("Charging", "Not Charging", "Discharging")
         counter = 0
-        while (True):
+        while (not self.flag_exit):
             if (counter == 85600):
                 exit()
             if (self.keyboard == True):

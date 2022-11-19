@@ -3,6 +3,11 @@ import json
 import time
 from threading import Thread
 
+
+# TODO fix range control logic
+# TODO fix charging over range issue
+# TODO fix fake battery wont terminate issue
+
 class Tracker:
     """
     A tracker that keeps sampling the status of a battery object,
@@ -78,8 +83,8 @@ class Tracker:
         self._reset_discharging_timer(self.previous_discharging_time)
         self.flag_bypass = 0
         self.battery.set_threshold(self.range)
-        self._start_tracking(1)
-        self._start_saving(10)
+        self._start_tracking(0.2)
+        # self._start_saving(10)
 
     def exit(self):
         """
@@ -93,6 +98,7 @@ class Tracker:
         self.previous_discharging_time = new_previous_discharging_time
         self.discharging_time = 0
         self.range_remain = self.range
+        print("new range: " + str(self.range_remain))
 
     def write_history(self):
         """
@@ -118,8 +124,12 @@ class Tracker:
         self.current_level, self.current_state, self.timestamp = self.battery.get_info()
         # update
         if self.current_state == "Discharging":
-            self.range_remain -= previous_level - self.current_level
+            if self.current_level < previous_level:
+                self.range_remain -= previous_level - self.current_level
             self.discharging_time += self.timestamp - previous_time
+            print("current state:" + str(self.current_state))
+            print(self.discharging_time)
+            print("ramain: " + str(self.range_remain))
         # if remain_range reaches zero, recalculate range
         if self.range_remain <= 0:
             if self.discharging_time < self.previous_discharging_time * 0.9:
@@ -127,7 +137,9 @@ class Tracker:
             elif self.discharging_time > self.previous_discharging_time * 1.1:
                 self.range = self.range - 5 if self.range - 5 >= 50 else 50
             # reset discharging timer, range remain
+            print("cycle time: " + str(self.discharging_time))
             self._reset_discharging_timer(self.discharging_time)
+            self.battery.set_threshold(self.range)
 
     def _track(self, interval: int):
         while self.flag_bypass == 0:
