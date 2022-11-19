@@ -1,0 +1,25 @@
+
+My feeling is, we can implement something like the TCP congestion control mechanism, that allow us to not do any long
+term analysis on the usage, but keep the two factor, discharging time and discharging depth, dynamically balanced.
+
+The idea of range increasing is, for the tracker, once detected the discharging time becomes lesser than previous
+(maybe apply 10% flex space), it will increase the range to see if the next discharging time has been improved.
+    if not, than try to increase further
+
+For the decreasing mechanism, think the user always want the device to have a longer battery life, that is, the next
+discharging time is always targeted to be long than the previous one (though this cannot always be achieved).
+So, if not lacking of energy(i.e. the range has to be increased), the service will try to decrease the range a little
+bit to see if the using time maintained.
+    if so,
+    if not,
+        if in allowed difference (less than 10%), than keep it
+        if more than allowed, than do the increasing process
+
+
+Another idea is, once the range be increased, the next discharging time should be longer if the work load keeps.
+That it is likely, after the range is increased to some degree, the discharging time should be roughly identical to the
+use case when before the work load has become heavier.
+
+By thinking of TCP, a must work solution is, once we meet a heavier work load, we maximise the range to 100%, and hugely
+decrease the range(fast recover) until meet another.
+
