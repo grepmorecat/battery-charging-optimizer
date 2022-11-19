@@ -5,17 +5,6 @@ import threading
 # import sqlite3
 # import keyboard
 
-'''
-gerSampling function generates reports of the battery
-we assume the current battery level is 80%
-function runs in a infinite loop
-there are 4 condition in total 2 to check the battery level for charging and discharging
-and another 2 to check to see if the battery has reached its max range and one for min range
-stores the data in a list and a counter iterates through the list to get every report
-time.sleep(1) makes sure that each report is generated 1second apart
-'''
-
-
 class Battery():
     def __init__(self, range=60):
         self.level = None
@@ -23,6 +12,8 @@ class Battery():
         self.state = None
         self.keyboard = None
         self.range = range
+        self.lowerThreshold = None
+        self.upperThreshold = None
         backgroundProcess = threading.Thread(target=self.samplingSimulator)
         backgroundProcess.start()
 
@@ -30,47 +21,46 @@ class Battery():
         batteryInfo = "Battery Level: {0}, Battery State: {1}, Time: {2}"
         return batteryInfo.format(self.level, self.state, self.time)
 
-    def set_threshold(self, threshold:int):
+    def set_upperThreshold(self, threshold):
+        self.upperThreshold = threshold
         return
 
-    def charge(self, states, maxRange):
+    def set_lowerThreshold(self, threshold):
+        self.lowerThreshold = threshold
+        return
+    def charge(self, states, upperThreshold):
         global batteryLevel
         global counter
         condition1 = True
         while (condition1 == True):
             if (counter == 85600):
-                # if (counter <= 0)
-                return
+                exit()
             self._setLevel(batteryLevel)
             self._setState(states)
             self._setTime(time.time())
             counter += 1
-            '''charge = uniform(.01, .05)'''
             charge = randint(1, 2)
             batteryLevel += charge
             time.sleep(1)
-            if (batteryLevel >= maxRange):
+            if (batteryLevel >= upperThreshold):
                 condition1 = False
         return
 
-    def discharge(self, states, minRange):
+    def discharge(self, states, lowerThreshold):
         global batteryLevel
         global counter
         condition2 = True
         while (condition2 == True):
             if (counter == 85600):
-                # if (counter <= 0)
-                return
+                exit()
             counter += 1
             self._setLevel(batteryLevel)
             self._setState(states)
             self._setTime(time.time())
-            # discharge = uniform(.01, .05)
             discharge = randint(1, 2)
             batteryLevel -= discharge
-            # counter -= discharge
             time.sleep(1)
-            if (batteryLevel <= minRange):
+            if (batteryLevel <= lowerThreshold):
                 condition2 = False
         return
 
@@ -78,7 +68,7 @@ class Battery():
         global batteryLevel
         global counter
         if (counter == 85600):
-            return
+            exit()
         condition = True
         while (condition == True):
             self.level = batteryLevel
@@ -91,26 +81,20 @@ class Battery():
         global batteryLevel
         global counter
         batteryLevel = 80
-        maxRange = 100 - ((100 - self.range) / 2)
-        minRange = (100 - self.range) / 2
-        # range = maxRange - minRange
+        self.upperThreshold = 100 - ((100 - self.range) / 2)
+        self.lowerThreshold = (100 - self.range) / 2
         states = ("Charging", "Not Charging", "Discharging")
         counter = 0
-        # counter = range
         while (True):
-            '''
-            laptop should be plugged in for the state "Not Charging" 
-            to simulate this im rolling a number between 0 and 2 for the state
-            '''
             if (counter == 85600):
-                return
+                exit()
             if (self.keyboard == True):
                 if (self.getLevel >= 80):
                     self.notCharging(states[1])
-            if (batteryLevel <= minRange):
-                self.charge(states[0], maxRange)
-            if (batteryLevel >= minRange):
-                self.discharge(states[2], minRange)
+            if (batteryLevel <= self.lowerThreshold):
+                self.charge(states[0], self.upperThreshold)
+            if (batteryLevel >= self.lowerThreshold):
+                self.discharge(states[2], self.lowerThreshold)
         return
 
     def get_info(self):
@@ -139,16 +123,8 @@ class Battery():
 
 
 if __name__ == "__main__":
-    defaultRange = 60
-    s = Battery(defaultRange)
+    s = Battery()
     while (True):
-        pluggedIn = False
-        if keyboard.is_pressed(" "):
-            pluggedIn = True
-        if pluggedIn == True:
-            s.setkeyboard(True)
-        else:
-            s.setkeyboard(False)
         e = s.get_info()
         print(e)
         time.sleep(1)
