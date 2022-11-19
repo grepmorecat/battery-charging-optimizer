@@ -5,6 +5,8 @@ from tracker import Tracker
 import time
 import datetime
 
+# TODO add discharging-depth info
+# TODO fix high system usage
 
 class Graph:
     """
