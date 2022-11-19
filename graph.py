@@ -24,9 +24,7 @@ class Graph:
         # start collections with zeros
         self.tracker = tracker
         self.battery = battery
-        """
-        initialize the battery and tracker
-        """
+        # initialize the battery and tracker
         self.history_queue = [0] * 20
         self.time_queue = [0.0] * 20
         # define and adjust figure
@@ -43,8 +41,8 @@ class Graph:
         :param interval: the interval of the graph
         :return: the updated graph
         """
-        # function to update the data
         info = self.battery.get_info()
+        # the first element in the list and append the new data to the list, clear the axis and plot the list again
         self.history_queue.append(info[0])
         self.history_queue.pop(0)
         self.time_queue.append(time.time())
@@ -52,41 +50,33 @@ class Graph:
         # clear axis
         self.ax.cla()
 
-        """
-        pop the first element in the list and append the new data to the list
-        clear the axis and plot the list again
-        """
-
-        # plot cpu
         x = [i for i in range(20)]
-        """
-        create a list of numbers from 0 to 19
-        """
+        # create a list of numbers from 0 to 19
         labels = [datetime.datetime.fromtimestamp(i).strftime('%M:%S.%f')[:-5] for i in self.time_queue]
-        """
-        The labels are the time in minutes, seconds, and milliseconds
-        """
+        # The labels are the time in minutes, seconds, and milliseconds
+
+        # set plot
         self.ax.plot(self.history_queue)
         self.ax.scatter(len(self.history_queue) - 1, self.history_queue[-1])
         self.ax.text(len(self.history_queue) - 1, self.history_queue[-1] + 2, "{}%".format(self.history_queue[-1]))
         self.ax.set_ylim(0, 100)
 
-        """
-        set the y-axis to be from 0 to 100
-        """
+        # set horizontal line
+        threshold = self.tracker.get_range()
+        plt.axhline(threshold)
+        self.ax.text(0, threshold - 5, "Current Range: " + str(threshold) + "%", fontsize=16)
+
+        # set the y-axis to be from 0 to 100
         plt.xticks(x, labels)
         plt.setp(self.ax.get_xticklabels(), rotation=30, ha='right')
-        """
-        rotate the x-axis labels by 30 degrees
-        """
+        # rotate the x-axis labels by 30 degrees
         # https://pythonguides.com/matplotlib-x-axis-label/#Matplotlib_x-axis_label_overlap
 
-        plt.text(0, 85, "Current State: " + info[1], fontsize=16, color="C2" if info[1] == "Charging" else "C1")
-        plt.text(0, 90, "Current Mode: " + self.tracker.get_mode(), fontsize=16,
+        # set display info
+        plt.text(0, 85, "State: " + info[1], fontsize=16, color="C2" if info[1] == "Charging" else "C1")
+        plt.text(0, 90, "Mode: " + self.tracker.get_mode(), fontsize=16,
                  color="C2" if self.tracker.get_mode() == "Auto" else "C1")
-        plt.text(0, 80, "Current Level: " + str(info[0]) + "%", fontsize=16)
-        plt.text(0, 75, "Current Range: " + str(self.tracker.get_range()) + "%", fontsize=16)
-        plt.axhline(self.tracker.get_range())
+        plt.text(0, 80, "Level: " + str(info[0]) + "%", fontsize=16)
 
         plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
 
@@ -95,13 +85,9 @@ class Graph:
         show the graph
         :return:
         """
-        # animate
         global ani
-
         ani = FuncAnimation(self.fig, self.func, interval=800)
-        """
-        animate the graph
-        """
+        # animate the graph
         plt.show()
 
 
