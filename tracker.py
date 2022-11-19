@@ -3,11 +3,6 @@ import json
 import time
 from threading import Thread
 
-
-# TODO fix range control logic
-# TODO fix charging over range issue
-# TODO fix fake battery wont terminate issue
-
 class Tracker:
     """
     A tracker that keeps sampling the status of a battery object,
@@ -98,7 +93,7 @@ class Tracker:
         self.previous_discharging_time = new_previous_discharging_time
         self.discharging_time = 0
         self.range_remain = self.range
-        print("new range: " + str(self.range_remain))
+        # print("new range: " + str(self.range_remain))
 
     def write_history(self):
         """
@@ -127,17 +122,24 @@ class Tracker:
             if self.current_level < previous_level:
                 self.range_remain -= previous_level - self.current_level
             self.discharging_time += self.timestamp - previous_time
-            print("current state:" + str(self.current_state))
-            print(self.discharging_time)
-            print("ramain: " + str(self.range_remain))
+            # print("current state:" + str(self.current_state))
+            # print(self.discharging_time)
+            # print("ramain: " + str(self.range_remain))
         # if remain_range reaches zero, recalculate range
         if self.range_remain <= 0:
-            if self.discharging_time < self.previous_discharging_time * 0.9:
-                self.range = self.range + 5 if self.range + 5 <= 100 else 100
-            elif self.discharging_time > self.previous_discharging_time * 1.1:
-                self.range = self.range - 5 if self.range - 5 >= 50 else 50
+            if self.discharging_time < self.previous_discharging_time * 0.75:
+                if self.range * 2 <= 100:
+                    self.range = self.range * 2
+                else:
+                    self.range = 100
+            elif self.discharging_time > self.previous_discharging_time * 0.75:
+                if self.range * 0.8 >= 50:
+                    self.range *= 0.8
+                else:
+                    self.range = 50
+
             # reset discharging timer, range remain
-            print("cycle time: " + str(self.discharging_time))
+            # print("cycle time: " + str(self.discharging_time))
             self._reset_discharging_timer(self.discharging_time)
             self.battery.set_threshold(self.range)
 

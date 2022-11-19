@@ -66,7 +66,7 @@ class Graph:
         # set horizontal line
         threshold = self.tracker.get_range()
         plt.axhline(threshold)
-        self.ax.text(0, threshold - 5, "Current Range: " + str(threshold) + "%", fontsize=16)
+        self.ax.text(10, threshold + 5, "Charging Threshold: " + str(threshold) + "%", fontsize=16)
 
         # set the y-axis to be from 0 to 100
         plt.xticks(x, labels)
@@ -80,7 +80,7 @@ class Graph:
                  color="C2" if self.tracker.get_mode() == "Auto" else "C1")
         plt.text(0, 80, "Level: " + str(info[0]) + "%", fontsize=16)
 
-        # plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
+        plt.fill_between(x, self.history_queue, alpha=0.2, color="green")
 
     def show(self):
         """
@@ -88,7 +88,7 @@ class Graph:
         :return:
         """
         global ani
-        ani = FuncAnimation(self.fig, self.func, interval=200)
+        ani = FuncAnimation(self.fig, self.func, interval=800)
         # animate the graph
         plt.show()
 
@@ -102,4 +102,3 @@ if __name__ == "__main__":
     g.show()
     b.exit()
     t.exit()
-    print("exiting")
