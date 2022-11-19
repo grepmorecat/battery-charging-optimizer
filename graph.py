@@ -1,43 +1,107 @@
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import collections
-
 from battery_simulated import Battery
 from tracker import Tracker
+import time
+import datetime
 
 
 class Graph:
+    """
+        This is a graph of the data I plotted using Matplotlib for real-time battery monitoring
+        The graph is animated using FuncAnimation, which is a function that takes in a time interval
+        The function that is passed in is the update function, which updates the graph every 1000 milliseconds.
+        The graph is updated by appending the new data to the list and then plotting the list and clearing it,
+        the graph is animated by clearing the graph and then plotting the list again
+    """
 
     def __init__(self, battery: Battery, tracker: Tracker):
+        """
+        initialize the graph
+        :param battery: the battery object
+        :param tracker: the tracker object
+        """
         # start collections with zeros
         self.tracker = tracker
         self.battery = battery
-        self.history_queue = collections.deque([0] * 20, maxlen=20)
+        """
+        initialize the battery and tracker
+        """
+        self.history_queue = [0] * 20
+        self.time_queue = [0.0] * 20
         # define and adjust figure
         self.fig = plt.figure(figsize=(12, 6), facecolor='#DEDEDE')
-        self.ax = plt.subplot(111)
+        # create a figure with a size of 12 by 6 and a color of #DEDEDE
+        self.ax = plt.subplot(1, 1, 1)
+        # create a subplot with 1 row and 1 column
         self.ax.set_facecolor('#DEDEDE')
+        # create a subplot with a color of #DEDEDE
 
     def func(self, interval):
+        """
+        update the graph
+        :param interval: the interval of the graph
+        :return: the updated graph
+        """
         # function to update the data
-        self.history_queue.popleft()
-        self.history_queue.append(self.battery.get_info()[0])
+        info = self.battery.get_info()
+        self.history_queue.append(info[0])
+        self.history_queue.pop(0)
+        self.time_queue.append(time.time())
+        self.time_queue.pop(0)
         # clear axis
         self.ax.cla()
+
+        """
+        pop the first element in the list and append the new data to the list
+        clear the axis and plot the list again
+        """
+
         # plot cpu
-        # todo: fill with time stamps
-        # x = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
         x = [i for i in range(20)]
+        """
+        create a list of numbers from 0 to 19
+        """
+        labels = [datetime.datetime.fromtimestamp(i).strftime('%M:%S.%f')[:-5] for i in self.time_queue]
+        """
+        The labels are the time in minutes, seconds, and milliseconds
+        """
         self.ax.plot(self.history_queue)
         self.ax.scatter(len(self.history_queue) - 1, self.history_queue[-1])
         self.ax.text(len(self.history_queue) - 1, self.history_queue[-1] + 2, "{}%".format(self.history_queue[-1]))
         self.ax.set_ylim(0, 100)
-        plt.xticks(x)
+
+        """
+        set the y-axis to be from 0 to 100
+        """
+        plt.xticks(x, labels)
+        plt.setp(self.ax.get_xticklabels(), rotation=30, ha='right')
+        """
+        rotate the x-axis labels by 30 degrees
+        """
+        # https://pythonguides.com/matplotlib-x-axis-label/#Matplotlib_x-axis_label_overlap
+
+        plt.text(0, 85, "Current State: " + info[1], fontsize=16, color="C2" if info[1] == "Charging" else "C1")
+        plt.text(0, 90, "Current Mode: " + self.tracker.get_mode(), fontsize=16,
+                 color="C2" if self.tracker.get_mode() == "Auto" else "C1")
+        plt.text(0, 80, "Current Level: " + str(info[0]) + "%", fontsize=16)
+        plt.text(0, 75, "Current Range: " + str(self.tracker.get_range()) + "%", fontsize=16)
+        plt.axhline(self.tracker.get_range())
+
+        plt.fill_between(x, self.history_queue, alpha=0.25, color="green")
 
     def show(self):
+        """
+        show the graph
+        :return:
+        """
         # animate
         global ani
-        ani = FuncAnimation(self.fig, self.func, interval=500)
+
+        ani = FuncAnimation(self.fig, self.func, interval=800)
+        """
+        animate the graph
+        """
         plt.show()
 
 
@@ -46,3 +110,6 @@ if __name__ == "__main__":
     t = Tracker(b)
     g = Graph(b, t)
     g.show()
+    print(111)
+    print("exiting")
+    t.exit()

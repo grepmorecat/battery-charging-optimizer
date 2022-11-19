@@ -3,6 +3,10 @@ import time
 
 
 class Battery:
+    """
+    A class that handle the request with the real battery on a linux system
+    Requires the root privilege.
+    """
     def __init__(self):
         pass
     def get_info(self) -> (int, str, float):
@@ -12,9 +16,17 @@ class Battery:
         return self._read_battery()
 
     def set_threshold(self, level: int):
+        """
+        Set the maximum charging threshold of the system.
+        :param level: integer level
+        """
         self._set_stop_threshold(level)
 
     def get_threshold(self):
+        """
+        Get the current maximum charging threshold of the system.
+        :return: integer threshold
+        """
         return self._get_stop_threshold()
 
     def _read_battery(self) -> (int, str, float):
@@ -35,7 +47,6 @@ class Battery:
         run bash command to set stop charging threshold of the system
         :return:
         """
-        return
         import os
         if os.getuid() != 0:
             raise Exception("need to run at root privileges")

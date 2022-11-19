@@ -3,16 +3,19 @@ import json
 import time
 from threading import Thread
 
-
-# TODO how to exit elegantly?
 class Tracker:
     """
-    for tracking sampled data, calculating range,
-    storing data to history.json file
+    A tracker that keeps sampling the status of a battery object,
+    and continuously stores date to history.json file for future use
     """
     default_range = 60
 
     def __init__(self, battery: Battery):
+        """
+        Initiate a tracker by providing a battery object which it will track on.
+        :param battery: a battery object
+        :rtype: a tracker object
+        """
         self.battery = battery
         self.current_level, self.current_state, self.timestamp = self.battery.get_info()
         self.range = None
@@ -23,7 +26,6 @@ class Tracker:
         self.flag_exit = 0
         self.flag_bypass = 0
 
-        # TODO check file exist?
         with open("history.json") as history_file:
             history = json.load(history_file)
 
@@ -45,29 +47,52 @@ class Tracker:
         self.set_auto()
 
     def get_range(self):
+        """
+        Get the current range set by the tracker.
+        :return: integer range.
+        """
         return int(self.range) if self.flag_bypass == 0 else 100
 
     def get_mode(self) -> str:
+        """
+        Get the current mode of the service.
+        :return: string "Bypass" or "Auto"
+        """
         return "Bypass" if self.flag_bypass else "Auto"
 
     def set_bypass(self):
+        """
+        Set the service mode to bypass mode
+        will set the battery threshold to 100%, and stop all the sampling
+        :return:
+        """
         self.flag_bypass = 1
         self.battery.set_threshold(100)
 
     def set_auto(self):
+        """
+        Set the service mode to auto mode.
+        will reset the timer used for tracking purpose, and restart the sampling
+        :return:
+        """
         self._reset_discharging_timer(self.previous_discharging_time)
         self.flag_bypass = 0
         self.battery.set_threshold(self.range)
         self._start_tracking(1)
         self._start_saving(10)
 
+    def exit(self):
+        """
+        Safely exit the tracker. will set the service mode to bypass mode for ending all sampling and resetting the
+        threshold settings back to before.
+        :return:
+        """
+        self.set_bypass()
+
     def _reset_discharging_timer(self, new_previous_discharging_time: float):
         self.previous_discharging_time = new_previous_discharging_time
         self.discharging_time = 0
         self.range_remain = self.range
-
-    def is_discharging(self) -> bool:
-        return True if self.current_state == "Discharging" else False
 
     def write_history(self):
         """
@@ -85,13 +110,14 @@ class Tracker:
 
     def update(self):
         """
-        sample the current battery status, and do calculation based on condition
+        Collect the current status of the battery,
+        and determine if range change need based of the collected data.
         """
         previous_time = self.timestamp
         previous_level = self.current_level
         self.current_level, self.current_state, self.timestamp = self.battery.get_info()
         # update
-        if self.is_discharging():
+        if self.current_state == "Discharging":
             self.range_remain -= previous_level - self.current_level
             self.discharging_time += self.timestamp - previous_time
         # if remain_range reaches zero, recalculate range
