@@ -127,12 +127,12 @@ class Tracker:
             # print("ramain: " + str(self.range_remain))
         # if remain_range reaches zero, recalculate range
         if self.range_remain <= 0:
-            if self.discharging_time < self.previous_discharging_time * 0.75:
-                if self.range * 2 <= 100:
-                    self.range = self.range * 2
+            if self.discharging_time < self.previous_discharging_time * 0.85:
+                if self.range * 1.5 <= 100:
+                    self.range = self.range * 1.5
                 else:
                     self.range = 100
-            elif self.discharging_time > self.previous_discharging_time * 0.75:
+            elif self.discharging_time > self.previous_discharging_time * 0.85:
                 if self.range * 0.8 >= 50:
                     self.range *= 0.8
                 else:
