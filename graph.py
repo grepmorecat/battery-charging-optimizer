@@ -71,7 +71,7 @@ class Graph:
 
         # set horizontal line
         threshold = self.tracker.get_range()
-        plt.axhline(threshold, color="red")
+        plt.axhline(threshold if threshold < 100 else 99.5, color="red")
         self.ax.text(0, 75, "Threshold: " + str(threshold) + "%", fontsize=16)
 
         # set the y-axis to be from 0 to 100
@@ -93,7 +93,7 @@ class Graph:
         show the graph
         :return:
         """
-        global ani
+        # global ani
         ani = FuncAnimation(self.fig, self.func, interval=250)
         # animate the graph
         plt.show()
