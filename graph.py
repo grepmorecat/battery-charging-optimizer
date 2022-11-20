@@ -34,9 +34,15 @@ class Graph:
         # create a figure with a size of 12 by 6 and a color of #DEDEDE
         self.ax = plt.subplot(1, 1, 1)
         # create a subplot with 1 row and 1 column
-        self.ax.set_facecolor('#DEDEDE')
+        self.ax.set_facecolor('#f7f7f7')
         # create a subplot with a color of #DEDEDE
+        self.fig.canvas.mpl_connect('button_press_event', self._toggle_mode)
 
+    def _toggle_mode(self, event):
+        if self.tracker.get_mode() == "Bypass":
+            self.tracker.set_auto()
+        else:
+            self.tracker.set_bypass()
     def func(self, interval):
         """
         update the graph
@@ -65,8 +71,8 @@ class Graph:
 
         # set horizontal line
         threshold = self.tracker.get_range()
-        plt.axhline(threshold)
-        self.ax.text(10, threshold + 5, "Charging Threshold: " + str(threshold) + "%", fontsize=16)
+        plt.axhline(threshold, color="red")
+        self.ax.text(0, 75, "Threshold: " + str(threshold) + "%", fontsize=16)
 
         # set the y-axis to be from 0 to 100
         plt.xticks(x, labels)
@@ -88,14 +94,13 @@ class Graph:
         :return:
         """
         global ani
-        ani = FuncAnimation(self.fig, self.func, interval=800)
+        ani = FuncAnimation(self.fig, self.func, interval=250)
         # animate the graph
         plt.show()
 
 
 if __name__ == "__main__":
     b = Battery()
-    b.set_workload(5)
     t = Tracker(b)
     g = Graph(b, t)
 

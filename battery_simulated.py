@@ -9,6 +9,7 @@ import sys
 # import keyboard
 
 class Battery():
+
     def __init__(self, range=60):
         self.level = None
         self.time = None
@@ -17,7 +18,7 @@ class Battery():
         self.lowerThreshold = None
         self.upperThreshold = None
         self.flag_exit = 0
-        self.workload = 5
+        self.workload = 4
         backgroundProcess = threading.Thread(target=self.samplingSimulator)
         backgroundProcess.start()
 
@@ -43,7 +44,7 @@ class Battery():
         return
 
     def charge(self, states, upperThreshold):
-        print("max threshold: " + str(upperThreshold))
+        # print("max threshold: " + str(upperThreshold))
         global batteryLevel
         condition1 = True
         while (condition1 == True):
@@ -59,7 +60,6 @@ class Battery():
             else:
                 batteryLevel += charge
             time.sleep(0.2)
-        self.workload = self.workload - 1 if self.workload - 1 > 0 else self.workload
         return
 
     def discharge(self, states, lowerThreshold):
@@ -71,7 +71,7 @@ class Battery():
             self._setLevel(batteryLevel)
             self._setState(states)
             self._setTime(time.time())
-            discharge = self.workload + randint(-1, 1)
+            discharge = self.workload
             batteryLevel -= discharge
             time.sleep(0.2)
             if (batteryLevel <= lowerThreshold):
