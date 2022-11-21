@@ -56,13 +56,8 @@ class Battery():
         # self._lowerThreshold = (100 - self.range) / 2
         states = ("Charging", "Not Charging", "Discharging")
         counter = 0
-        try:
-            self._lowerThreshold = 20 + randint(-10, 20)
-            self._upperThreshold = 80
-        except:
-            self._lowerThreshold = 20
-            self._upperThreshold = 80
-
+        self._lowerThreshold = 20
+        self._upperThreshold = 80
         while (True):
             if (self._stop == 1):
                 sys.exit()
@@ -95,13 +90,13 @@ class Battery():
             # charge = randint(1, 2)
             charge = randint(6, 10)
             if (counter == 86400 or batteryLevel + charge >= upperThreshold):
-                batteryLevel = upperThreshold
+                batteryLevel = self._upperThreshold + 4
                 self.setInfo(batteryLevel, state)
                 break
             else:
                 batteryLevel += charge
                 self.setInfo(batteryLevel, state)
-            time.sleep(1)
+            time.sleep(0.5)
         return
 
     def discharge(self, state, lowerThreshold):
@@ -120,13 +115,13 @@ class Battery():
             # discharge = randint(1, 2)
             discharge = self._workload
             if (counter == 86400 or batteryLevel - discharge <= lowerThreshold):
-                batteryLevel = lowerThreshold
+                batteryLevel = self._lowerThreshold - 2
                 self.setInfo(batteryLevel, state)
                 break
             else:
                 batteryLevel -= discharge
                 self.setInfo(batteryLevel, state)
-            time.sleep(1)
+            time.sleep(0.5)
         return
 
     def notCharging(self, state):

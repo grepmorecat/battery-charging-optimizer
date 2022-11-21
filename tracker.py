@@ -67,7 +67,7 @@ class Tracker:
         :return:
         """
         self.flag_bypass = 1
-        self.battery.set_threshold(100)
+        self.battery.setUpperThreshold(100)
 
     def set_auto(self):
         """
