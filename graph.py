@@ -105,5 +105,5 @@ if __name__ == "__main__":
     g = Graph(b, t)
 
     g.show()
-    b.exit()
+    b.stop()
     t.exit()
