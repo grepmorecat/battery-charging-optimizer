@@ -103,7 +103,7 @@ if __name__ == "__main__":
     b = Battery()
     t = Tracker(b)
     g = Graph(b, t)
-
+    b.setPluggedIn(True)
     g.show()
     b.stop()
     t.exit()
