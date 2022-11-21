@@ -77,7 +77,7 @@ class Tracker:
         """
         self._reset_discharging_timer(self.previous_discharging_time)
         self.flag_bypass = 0
-        self.battery.set_threshold(self.range)
+        self.battery.setUpperThreshold(self.range)
         self._start_tracking(0.2)
         # self._start_saving(10)
 
@@ -141,7 +141,7 @@ class Tracker:
             # reset discharging timer, range remain
             # print("cycle time: " + str(self.discharging_time))
             self._reset_discharging_timer(self.discharging_time)
-            self.battery.set_threshold(self.range)
+            self.battery.setUpperThreshold(self.range)
 
     def _track(self, interval: int):
         while self.flag_bypass == 0:
