@@ -3,7 +3,6 @@ from random import randint
 import threading
 import sys
 
-
 class Battery():
     '''
     batterySimulator class simulates a real battery (for PC or non-linux users since our program runs with linux OS)
@@ -32,7 +31,6 @@ class Battery():
         self._pluggedIn = False
         '''begin a threading process'''
         backgroundProcess = threading.Thread(target=self.samplingSimulator)
-        backgroundProcess.daemon = True
         backgroundProcess.start()
 
     def __str__(self):
@@ -91,11 +89,12 @@ class Battery():
             charge = randint(6, 10)
             if (counter == 86400 or batteryLevel + charge >= upperThreshold):
                 batteryLevel = self._upperThreshold
-                self.setInfo(batteryLevel, state)
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
                 break
             else:
                 batteryLevel += charge
-                self.setInfo(batteryLevel, state)
+                self.setInfo(int(batteryLevel), state)
             time.sleep(0.5)
         return
 
@@ -116,11 +115,12 @@ class Battery():
             discharge = self._workload
             if (counter == 86400 or batteryLevel - discharge <= lowerThreshold):
                 batteryLevel = self._lowerThreshold
-                self.setInfo(batteryLevel, state)
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
                 break
             else:
                 batteryLevel -= discharge
-                self.setInfo(batteryLevel, state)
+                self.setInfo(int(batteryLevel), state)
             time.sleep(0.5)
         return
 
@@ -133,13 +133,20 @@ class Battery():
         '''
         global batteryLevel
         global counter
+        timer = 0
         while (True):
             if (self._stop == 1):
                 sys.exit()
-            if (counter == 86400 or self._stop == 1):
+            if (counter == 86400):
                 break
             counter += 1
-            self.setInfo(batteryLevel, state)
+            if timer == 5:
+                self.setPluggedIn(False)
+                break
+            batteryLevel = self._upperThreshold
+            self.setInfo(int(batteryLevel), state)
+            time.sleep(1)
+            timer += 1
         return
 
     def setInfo(self, level, state):
