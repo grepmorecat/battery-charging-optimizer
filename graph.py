@@ -43,6 +43,7 @@ class Graph:
             self.tracker.set_auto()
         else:
             self.tracker.set_bypass()
+
     def func(self, interval):
         """
         update the graph
