@@ -79,12 +79,17 @@ class Battery():
         '''
         global batteryLevel
         global counter
+        self.setPluggedIn(True)
         while (True):
             if (self._stop == 1):
                 sys.exit()
             counter += 1
             # charge = randint(1, 2)
             charge = randint(1, 5)
+            if (self._pluggedIn == False):
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
+                break
             if (counter == 86400 or batteryLevel + charge >= upperThreshold):
                 batteryLevel = self._upperThreshold
                 self.setInfo(int(batteryLevel), state)
