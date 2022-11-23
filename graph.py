@@ -92,6 +92,8 @@ class Graph:
         plt.text(0, 90, "Mode: " + self.tracker.get_mode(), fontsize=16,
                  color="C2" if self.tracker.get_mode() == "Auto" else "C1")
         plt.text(0, 80, "Level: " + str(info[0]) + "%", fontsize=16)
+        plt.text(0, 70, "Plugged In: " + str(self.battery.getPluggedIn()), fontsize=16, 
+                 color="C2" if str(self.battery.getPluggedIn()) == "True" else "C1")
 
         plt.fill_between(x, self.history_queue, alpha=0.2, color="green")
 
