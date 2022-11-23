@@ -175,8 +175,6 @@ class Tracker:
     # set the range of the battery
     def set_range(self, range):
         self.range = range
-        self.range_remain = range
-        self.battery.set_threshold(range)
 
 if __name__ == "__main__":
     t = Tracker(Battery())

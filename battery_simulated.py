@@ -245,5 +245,3 @@ if __name__ == "__main__":
         e = s.get_info()
         print(e)
         time.sleep(0.1)
-
-
