@@ -2,21 +2,23 @@ import unittest
 from tracker import Tracker
 from battery_simulated import Battery
 
+
 class TestTracker(unittest.TestCase):
+
+    # GETTERS & SETTERS #
+
+    #unittest for the set_range method
+    def test_set_range(self):
+        t = Tracker(Battery())
+        t.set_range(50)
+        self.assertEqual(t.range, 50)
+    # END test_set_range
 
     # unittest for the get_range method
     def test_get_range(self):
         t = Tracker(Battery())
         self.assertEqual(t.get_range(), 65)
-        t.set_bypass()
-        self.assertEqual(t.get_range(), 100)
-        t.set_auto()
-        self.assertEqual(t.get_range(), 65)
         t.set_range(50)
-        self.assertEqual(t.get_range(), 50)
-        t.set_bypass()
-        self.assertEqual(t.get_range(), 100)
-        t.set_auto()
         self.assertEqual(t.get_range(), 50)
     # END test_get_range
 
@@ -41,28 +43,6 @@ class TestTracker(unittest.TestCase):
         self.assertEqual(t.flag_bypass, 0)
     # END test_set_auto
 
-    # unittest for the exit method
-    def test_exit(self):
-        t = Tracker(Battery())
-        self.assertEqual(t.flag_bypass, 0)
-        t.exit()
-        self.assertEqual(t.flag_bypass, 1)
-    # END test_exit
-    
-    # unittest for the _reset_discharging_timer method
-    def test_reset_discharging_timer(self):
-        t = Tracker(Battery())
-        t._reset_discharging_timer(100)
-        self.assertEqual(t.discharging_time, 0)
-    # END test_reset_discharging_timer
-    
-    #unittest for the set_range method
-    def test_set_range(self):
-        t = Tracker(Battery())
-        t.set_range(50)
-        self.assertEqual(t.range, 50)
-    # END test_set_range
-    
     # unittest for the get_mode method
     def test_get_mode(self):
         t = Tracker(Battery())
@@ -77,6 +57,23 @@ class TestTracker(unittest.TestCase):
     # END test_get_mode
 
 
+
+    # MAIN METHODS #
+
+    # unittest for the exit method
+    def test_exit(self):
+        t = Tracker(Battery())
+        self.assertEqual(t.flag_bypass, 0)
+        t.exit()
+        self.assertEqual(t.flag_bypass, 1)
+    # END test_exit
+
+    # unittest for the _reset_discharging_timer method
+    def test_reset_discharging_timer(self):
+        t = Tracker(Battery())
+        t._reset_discharging_timer(100)
+        self.assertEqual(t.discharging_time, 0)
+    # END test_reset_discharging_timer
 
 if __name__ == '__main__':
     unittest.main()
