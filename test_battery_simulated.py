@@ -16,7 +16,7 @@ class TestBattery(unittest.TestCase):
     # the method should return the current level of the battery
     def test_getLevel(self):
         b = Battery()
-        b._setLevel(50)
+        b._setLevel(46)
         self.assertEqual(b.getLevel(), 50)
     # END test_getLevel
 
@@ -27,7 +27,7 @@ class TestBattery(unittest.TestCase):
         b._setLevel(50)
         self.assertEqual(b.getLevel(), 50)
         b._setLevel(0)
-        self.assertEqual(b.getLevel(), 0)
+        self.assertEqual(b.getLevel(), 2)
     # END test_setLevel
 
 
@@ -48,6 +48,8 @@ class TestBattery(unittest.TestCase):
     def test_getState(self):
         b = Battery()
         self.assertEqual(b.getState(), "Discharging")
+        b._setState("Charging")
+        self.assertEqual(b.getState(), "Charging")
     # END test_getState
 
         
@@ -75,6 +77,8 @@ class TestBattery(unittest.TestCase):
     def test_getPluggedIn(self):
         b = Battery()
         self.assertEqual(b.getPluggedIn(), 0)
+        b.setPluggedIn(1)
+        self.assertEqual(b.getPluggedIn(), 1)
     # END test_getPluggedIn
 
     # unittest for the _setPluggedIn method
@@ -92,16 +96,16 @@ class TestBattery(unittest.TestCase):
     # we can assume that the workload is 4 by default
     def test_getWorkload(self):
         b = Battery()
-        b.setWorkload(50)
-        self.assertEqual(b.getWorkload(), 50)
+        b.setWorkload(5)
+        self.assertEqual(b.getWorkload(), 5)
     # END test_getWorkload
 
     # unittest for the _setWorkload method
     # the method should set the workload of the battery
     def test_setWorkload(self):
         b = Battery()
-        b.setWorkload(50)
-        self.assertEqual(b.getWorkload(), 50)
+        b.setWorkload(3)
+        self.assertEqual(b.getWorkload(), 3)
         b.setWorkload(0)
         self.assertEqual(b.getWorkload(), 0)
     # END test_setWorkload
@@ -112,6 +116,8 @@ class TestBattery(unittest.TestCase):
     def test_getUpperThreshold(self):
         b = Battery()
         self.assertEqual(b.getUpperThreshold(), 65)
+        b.setUpperThreshold(50)
+        self.assertEqual(b.getUpperThreshold(), 50)
     # END test_getUpperThreshold
 
     # unittest for the _setUpperThreshold method
@@ -129,6 +135,7 @@ class TestBattery(unittest.TestCase):
     # we can assume that the lowerThreshold is 20 by default
     def test_getLowerThreshold(self):
         b = Battery()
+        self.assertEqual(b.getLowerThreshold(), 20)
         b.setUpperThreshold(50)
         self.assertEqual(b.getUpperThreshold(), 50)
     # END test_getLowerThreshold
@@ -137,10 +144,10 @@ class TestBattery(unittest.TestCase):
     # the method should set the lowerThreshold of the battery
     def test_setLowerThreshold(self):
         b = Battery()
-        b.setLowerThreshold(50)
-        self.assertEqual(b.getLowerThreshold(), 50)
-        b.setLowerThreshold(0)
-        self.assertEqual(b.getLowerThreshold(), 0)
+        b.setLowerThreshold(35)
+        self.assertEqual(b.getLowerThreshold(), 35)
+        b.setLowerThreshold(2)
+        self.assertEqual(b.getLowerThreshold(), 2)
     # END test_setLowerThreshold
 
     # unittest for the setInfo method
@@ -159,7 +166,7 @@ class TestBattery(unittest.TestCase):
     # MAIN METHODS #
 
     # unnitest for the stop method
-    # the method should stop the battery
+    # the method should stop the battery simulation
     # we can assume that the battery is not stopped by default therefore default value is None
     def test_stop(self):
         b = Battery()
