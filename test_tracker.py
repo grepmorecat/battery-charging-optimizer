@@ -10,16 +10,18 @@ class TestTracker(unittest.TestCase):
     #unittest for the set_range method
     def test_set_range(self):
         t = Tracker(Battery())
-        t.set_range(50)
-        self.assertEqual(t.range, 50)
+        t.set_range(36)
+        self.assertEqual(t.range, 36)
+        t.set_range(65)
+        self.assertEqual(t.range, 65)
     # END test_set_range
 
     # unittest for the get_range method
     def test_get_range(self):
         t = Tracker(Battery())
         self.assertEqual(t.get_range(), 65)
-        t.set_range(50)
-        self.assertEqual(t.get_range(), 50)
+        t.set_range(72)
+        self.assertEqual(t.get_range(), 72)
     # END test_get_range
 
     # unittest for the set_bypass method
