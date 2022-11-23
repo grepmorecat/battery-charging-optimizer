@@ -8,12 +8,11 @@ class Battery():
     batterySimulator class simulates a real battery (for PC or non-linux users since our program runs with linux OS)
     '''
 
-    def __init__(self, range=60):
+    def __init__(self):
         '''
         self._level - battery level
         self._time - the time
         self._state - state of the battery (Charging, Not Charging, Discharging)
-        self._range - range of charing and discharging
         self._upperThreshold - highest percentage before discharging
         self._lowerThreshold - lowest percentage before discharging
         self._stop - condition to stop infinite loops
@@ -23,7 +22,6 @@ class Battery():
         self._level = 0
         self._time = None
         self._state = None
-        self._range = range
         self._lowerThreshold = None
         self._upperThreshold = None
         self._stop = 0
@@ -49,13 +47,13 @@ class Battery():
         '''
         global batteryLevel
         global counter
-        batteryLevel = 80
+        batteryLevel = 65
         # self._upperThreshold = 100 - ((100 - self._range) / 2)
         # self._lowerThreshold = (100 - self.range) / 2
         states = ("Charging", "Not Charging", "Discharging")
         counter = 0
         self._lowerThreshold = 20
-        self._upperThreshold = 80
+        self._upperThreshold = 65
         while (True):
             if (self._stop == 1):
                 sys.exit()
@@ -64,10 +62,10 @@ class Battery():
             if (self._level >= 80 and self._pluggedIn == True):
                 self.setInfo(batteryLevel, states[1])
                 self.notCharging(states[1])
-            elif (batteryLevel <= self._lowerThreshold):
+            elif (batteryLevel <= self._lowerThreshold or self._pluggedIn == True):
                 self.setInfo(batteryLevel, states[0])
                 self.charge(states[0], self._upperThreshold)
-            elif (batteryLevel >= self._lowerThreshold):
+            elif (batteryLevel >= self._lowerThreshold and self._pluggedIn == False):
                 self.setInfo(batteryLevel, states[2])
                 self.discharge(states[2], self._lowerThreshold)
         return
@@ -86,7 +84,7 @@ class Battery():
                 sys.exit()
             counter += 1
             # charge = randint(1, 2)
-            charge = randint(6, 10)
+            charge = randint(1, 5)
             if (counter == 86400 or batteryLevel + charge >= upperThreshold):
                 batteryLevel = self._upperThreshold
                 self.setInfo(int(batteryLevel), state)
@@ -113,7 +111,11 @@ class Battery():
             counter += 1
             # discharge = randint(1, 2)
             discharge = self._workload
-            if (counter == 86400 or batteryLevel - discharge <= lowerThreshold):
+            if (counter == 86400 or self._pluggedIn == True):
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
+                break
+            if (batteryLevel - discharge <= lowerThreshold):
                 batteryLevel = self._lowerThreshold
                 self.setInfo(int(batteryLevel), state)
                 time.sleep(0.5)
@@ -133,20 +135,15 @@ class Battery():
         '''
         global batteryLevel
         global counter
-        timer = 0
         while (True):
             if (self._stop == 1):
                 sys.exit()
-            if (counter == 86400):
+            if (counter == 86400 or self._pluggedIn == False):
                 break
             counter += 1
-            if timer == 5:
-                self.setPluggedIn(False)
-                break
             batteryLevel = self._upperThreshold
             self.setInfo(int(batteryLevel), state)
-            time.sleep(1)
-            timer += 1
+            time.sleep(0.5)
         return
 
     def setInfo(self, level, state):
@@ -215,10 +212,12 @@ class Battery():
 
     '''set laptop to be plugged in'''
 
+    def getPluggedIn(self):
+        return self._pluggedIn
+
     def setPluggedIn(self, pluggedIn):
         '''simulates if a battery is plugged in'''
         self._pluggedIn = pluggedIn
-
 
 if __name__ == "__main__":
     s = Battery()

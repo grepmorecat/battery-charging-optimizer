@@ -39,10 +39,16 @@ class Graph:
         self.fig.canvas.mpl_connect('button_press_event', self._toggle_mode)
 
     def _toggle_mode(self, event):
-        if self.tracker.get_mode() == "Bypass":
-            self.tracker.set_auto()
-        else:
-            self.tracker.set_bypass()
+        if event.button == 1:
+            if self.tracker.get_mode() == "Bypass":
+                self.tracker.set_auto()
+            else:
+                self.tracker.set_bypass()
+        elif event.button == 3:
+            if self.battery.getPluggedIn() == False:
+                self.battery.setPluggedIn(True)
+            else:
+                self.battery.setPluggedIn(False)
 
     def func(self, interval):
         """
@@ -104,7 +110,6 @@ if __name__ == "__main__":
     b = Battery()
     t = Tracker(b)
     g = Graph(b, t)
-    b.setPluggedIn(True)
     g.show()
     b.stop()
     t.exit()
