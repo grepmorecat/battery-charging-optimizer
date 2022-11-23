@@ -25,8 +25,9 @@ class Battery():
         self._lowerThreshold = None
         self._upperThreshold = None
         self._stop = 0
-        self._workload = 4
+        self._workload = 6
         self._pluggedIn = False
+        self._notPluggedOut = False
         '''begin a threading process'''
         backgroundProcess = threading.Thread(target=self.samplingSimulator)
         backgroundProcess.start()
@@ -52,14 +53,14 @@ class Battery():
         # self._lowerThreshold = (100 - self.range) / 2
         states = ("Charging", "Not Charging", "Discharging")
         counter = 0
-        self._lowerThreshold = 20
         self._upperThreshold = 65
         while (True):
+            self._lowerThreshold = 20 - randint(0, 10)
             if (self._stop == 1):
                 sys.exit()
             if (counter == 86400):
                 break
-            if (self._level >= 80 and self._pluggedIn == True):
+            if (self._level >= self._upperThreshold and self._pluggedIn == True):
                 self.setInfo(batteryLevel, states[1])
                 self.notCharging(states[1])
             elif (batteryLevel <= self._lowerThreshold or self._pluggedIn == True):
@@ -85,7 +86,7 @@ class Battery():
                 sys.exit()
             counter += 1
             # charge = randint(1, 2)
-            charge = randint(1, 5)
+            charge = randint(6, 10)
             if (self._pluggedIn == False):
                 self.setInfo(int(batteryLevel), state)
                 time.sleep(0.5)
@@ -94,6 +95,7 @@ class Battery():
                 batteryLevel = self._upperThreshold
                 self.setInfo(int(batteryLevel), state)
                 time.sleep(0.5)
+                self.setPluggedIn(False)
                 break
             else:
                 batteryLevel += charge
@@ -116,6 +118,9 @@ class Battery():
             counter += 1
             # discharge = randint(1, 2)
             discharge = self._workload
+            if (self._notPluggedOut == True):
+                self.setPluggedIn(True)
+                break
             if (counter == 86400 or self._pluggedIn == True):
                 self.setInfo(int(batteryLevel), state)
                 time.sleep(0.5)
@@ -146,9 +151,15 @@ class Battery():
             if (counter == 86400 or self._pluggedIn == False):
                 break
             counter += 1
-            batteryLevel = self._upperThreshold
-            self.setInfo(int(batteryLevel), state)
-            time.sleep(0.5)
+            if (self._notPluggedOut == True):
+                batteryLevel = self._upperThreshold
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
+            else:
+                batteryLevel = self._upperThreshold
+                self.setInfo(int(batteryLevel), state)
+                time.sleep(0.5)
+                break
         return
 
     def setInfo(self, level, state):
@@ -223,6 +234,9 @@ class Battery():
     def setPluggedIn(self, pluggedIn):
         '''simulates if a battery is plugged in'''
         self._pluggedIn = pluggedIn
+
+    def setNotPluggedOut(self, pluggedOut):
+        self._notPluggedOut = pluggedOut
 
 if __name__ == "__main__":
     s = Battery()

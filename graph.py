@@ -47,8 +47,10 @@ class Graph:
         elif event.button == 3:
             if self.battery.getPluggedIn() == False:
                 self.battery.setPluggedIn(True)
+                self.battery.setNotPluggedOut(True)
             else:
                 self.battery.setPluggedIn(False)
+                self.battery.setNotPluggedOut(False)
 
     def func(self, interval):
         """
