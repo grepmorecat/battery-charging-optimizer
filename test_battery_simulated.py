@@ -57,8 +57,8 @@ class TestBattery(unittest.TestCase):
     # the method should return the time of the battery
     def test_getTime(self):
         b = Battery()
-        b._setTime(50)
-        self.assertEqual(b.getTime(), 50)
+        b._setTime(889)
+        self.assertEqual(b.getTime(), 889)
     # END test_getTime
 
     # unittest for the _setTime method
