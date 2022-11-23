@@ -33,7 +33,7 @@ class TestBattery(unittest.TestCase):
         b._setState("Discharging")
         self.assertEqual(b.getState(), "Discharging")
     # END test_setState
-    
+
     # unittest for the get_State method
     # the method should return the state of the battery
     def test_getState(self):
@@ -62,6 +62,6 @@ class TestBattery(unittest.TestCase):
 
 
 
-
 if __name__ == '__main__':
     unittest.main(exit=False)
+# ENDIF
