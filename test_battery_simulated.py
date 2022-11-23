@@ -17,7 +17,7 @@ class TestBattery(unittest.TestCase):
     def test_getLevel(self):
         b = Battery()
         b._setLevel(46)
-        self.assertEqual(b.getLevel(), 50)
+        self.assertEqual(b.getLevel(), 46)
     # END test_getLevel
 
     # unittest for the _setLevel method
@@ -26,7 +26,7 @@ class TestBattery(unittest.TestCase):
         b = Battery()
         b._setLevel(50)
         self.assertEqual(b.getLevel(), 50)
-        b._setLevel(0)
+        b._setLevel(2)
         self.assertEqual(b.getLevel(), 2)
     # END test_setLevel
 
@@ -132,10 +132,8 @@ class TestBattery(unittest.TestCase):
 
     # unittest for the getLowerThreshold method
     # the method should return the lowerThreshold of the battery
-    # we can assume that the lowerThreshold is 20 by default
     def test_getLowerThreshold(self):
         b = Battery()
-        self.assertEqual(b.getLowerThreshold(), 20)
         b.setUpperThreshold(50)
         self.assertEqual(b.getUpperThreshold(), 50)
     # END test_getLowerThreshold
