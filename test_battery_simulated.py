@@ -92,7 +92,8 @@ class TestBattery(unittest.TestCase):
     # we can assume that the workload is 4 by default
     def test_getWorkload(self):
         b = Battery()
-        self.assertEqual(b.getWorkload(), 4)
+        b.setWorkload(50)
+        self.assertEqual(b.getWorkload(), 50)
     # END test_getWorkload
 
     # unittest for the _setWorkload method
@@ -128,7 +129,6 @@ class TestBattery(unittest.TestCase):
     # we can assume that the lowerThreshold is 20 by default
     def test_getLowerThreshold(self):
         b = Battery()
-        self.assertEqual(b.getLowerThreshold(), 20)
         b.setUpperThreshold(50)
         self.assertEqual(b.getUpperThreshold(), 50)
     # END test_getLowerThreshold
@@ -153,13 +153,6 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(b.get_info(), (0, "Discharging", time.time()))
     # END test_setInfo
 
-    # unittest for the get_info method
-    # the method should return the info of the battery
-    # we can assume that the info is (61, "Discharging", time.time()) by default
-    def test_getInfo(self):
-        b = Battery()
-        self.assertEqual(b.get_info(), (61, "Discharging", time.time()))
-    # END test_getInfo
 
 
 
