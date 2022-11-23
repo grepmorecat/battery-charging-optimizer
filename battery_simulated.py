@@ -18,6 +18,7 @@ class Battery():
         self._stop - condition to stop infinite loops
         self._pluggedIn - condition to simulate the laptop being plugged in for charging
         self._workload - amount of battery power needed to execute programs running on laptop
+        self._notPluggedOut - if the laptop is still plugged in
         '''
         self._level = 0
         self._time = None
@@ -40,11 +41,11 @@ class Battery():
     def samplingSimulator(self):
         '''
         method contains the simulator
-        firstly we set the batterylevel to 80%(since this is a simulator we assume that is what the battery level starts at when first called)
-        upperThreshold and lowerThresold are calculated based on what the range is specified to be(for our starting point it will be 60%)
+        firstly we set the batterylevel to 65%(since this is a simulator we assume that is what the battery level starts at when first called)
+        upperThreshold and lowerThresold are predetermined for this simulator
         batteryLevel and counter are set to global so they can get accessed and modified by other methods
         counter is set to 0 (and will end after 86400 interations)
-        infinite loop checks to see if the battery needs to be charged or discharged based on what batteryLevel
+        infinite loop checks to see if the battery needs to be charged or discharged or in Not Charging state based on batteryLevel and pluggedIn conditions
         '''
         global batteryLevel
         global counter
@@ -55,6 +56,7 @@ class Battery():
         counter = 0
         self._upperThreshold = 65
         while (True):
+            #for this lower threshold we are assuming that the user plugs their laptop in for charging anywhere from 10% tp 20%
             self._lowerThreshold = 20 - randint(0, 10)
             if (self._stop == 1):
                 sys.exit()
@@ -74,9 +76,11 @@ class Battery():
     def charge(self, state, upperThreshold):
         '''
         method simulates a battery charging
-        starts by entering an infinite loop with a nested condition
-        if battery has hit 80% or above then quit inifnite loop or if counter hits 86400 also quit or if self._stop is set
-        otherwise increase counter, batterylevel and set level, state, time
+        starts by entering an infinite loop with conditions to break infinite loop
+        first condition stop the whole program
+        second condition if laptop not plugged in break loop as it cant be charged
+        third condition if battery has hits the threshold or above then quit inifnite loop or if counter hits 86400 set info and then break loop
+                         else set info and continue loop
         '''
         global batteryLevel
         global counter
@@ -106,9 +110,12 @@ class Battery():
     def discharge(self, state, lowerThreshold):
         '''
         method simulates a battery discharging
-        starts by entering an infinite loop with a nested condition
-        if battery has hit 20% or below then quit inifnite loop or if counter hits 86400 also quit or if self._stop is set
-        otherwise increase counter, decrease batterylevel and set level, state, time
+        starts by entering an infinite loop with conditions to break the loop
+        first condition stop the whole program
+        second condition if laptop not plugged out, set notPluggedOut to true and break loop as battery cannot be discharged when plugged in
+        third condition if battery has hits the lower threshold or above then quit inifnite loop or if counter hits 86400 set info and then break loop
+                         else set info and continue loop
+        NOTE: for the third condition we are to assume the lower threshold is when the user plugs in their laptop for charging
         '''
         global batteryLevel
         global counter
@@ -139,9 +146,11 @@ class Battery():
     def notCharging(self, state):
         '''
         method simulates a battery not charging
-        starts by entering an infinite loop with a condition
-        if counter hits 86400 also quit or if self._stop is set
-        otherwise increase counter and set level, state, time
+        starts by entering an infinite loop with conditions to break the loop
+        first condition stop the whole program
+        second condition if laptop not plugged in or if counter hits 86400 break loop as it cannot be in Not Charging State without being plugged in
+        third condition if not plugged out then set info
+                        else set info and break infinite loop
         '''
         global batteryLevel
         global counter
@@ -162,19 +171,17 @@ class Battery():
                 break
         return
 
+    '''getters and setters'''
     def setInfo(self, level, state):
         '''method called by other methods in the class to set the level, state and time'''
         self._level = level
         self._state = state
         self._time = time.time()
 
-    '''getters and setters'''
-
     def get_info(self):
         return (self._level, self._state, self._time)
 
     '''Battery Levels'''
-
     def getLevel(self):
         return self._level
 
@@ -182,7 +189,6 @@ class Battery():
         self._level = level
 
     '''Battery states'''
-
     def getState(self):
         return self._state
 
@@ -190,7 +196,6 @@ class Battery():
         self._state = state
 
     '''Time'''
-
     def getTime(self):
         return self._time
 
@@ -198,12 +203,10 @@ class Battery():
         self._time = time
 
     '''Flag to stop loops'''
-
     def stop(self):
         self._stop = 1
 
     '''Thresholds(or Range)'''
-
     def getUpperThreshold(self):
         return self._upperThreshold
 
@@ -219,7 +222,6 @@ class Battery():
         self._lowerThreshold = threshold
 
     '''workload'''
-
     def getWorkload(self):
         return self._workload
 
@@ -227,7 +229,6 @@ class Battery():
         self._workload = percentage
 
     '''set laptop to be plugged in'''
-
     def getPluggedIn(self):
         return self._pluggedIn
 
@@ -236,6 +237,7 @@ class Battery():
         self._pluggedIn = pluggedIn
 
     def setNotPluggedOut(self, pluggedOut):
+        '''Charger is still plugged in or out depending on True or False statements'''
         self._notPluggedOut = pluggedOut
 
 if __name__ == "__main__":
