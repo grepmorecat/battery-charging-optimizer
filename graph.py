@@ -80,8 +80,8 @@ class Graph:
 
         # set horizontal line
         threshold = self.tracker.get_range()
-        plt.axhline(threshold if threshold < 100 else 99.5, color="red")
-        self.ax.text(0, 75, "Threshold: " + str(threshold) + "%", fontsize=16)
+        plt.axhline(self.battery.getUpperThreshold() if self.battery.getUpperThreshold() < 100 else 99.5, color="red")
+        self.ax.text(0, 75, "Threshold: " + str(self.battery.getUpperThreshold()) + "%", fontsize=16)
 
         # set the y-axis to be from 0 to 100
         plt.xticks(x, labels)
