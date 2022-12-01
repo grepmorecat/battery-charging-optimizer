@@ -17,12 +17,17 @@ class Labels(object):
         self._selectedMode = tk.StringVar()
         self._selected = tk.IntVar()
         self._level = tk.StringVar()
+        self._keepCharging = tk.StringVar()
 
         self._selectedMode.set("Auto") #set the starting selected mode to auto
+        self._keepCharging.set("No")
 
         tk.Label(self._root, text="Battery Level: ", font=15).grid(row=0, column=0, padx=10, pady=10)
         tk.Label(self._root, text="Current Mode:", font=15).grid(row=2, column=0, padx=10, pady=10)
         tk.Label(self._root, textvariable=self._selectedMode, font=15).grid(row=2, column=1, pady=5)
+
+        tk.Label(self._root, text="Keep Charging: ", font=15).grid(row=6, column=0, padx=10, pady=10)
+        tk.Label(self._root, textvariable=self._keepCharging, font=15).grid(row=6, column=1, pady=5)
 
         self._thresholdLabel = tk.Label(self._root, text="Setting Threshold to: ", font=15)
         self._thresholdLevelLabel = tk.Label(self._root, textvariable=self._selected, font=15)
@@ -69,3 +74,9 @@ class Labels(object):
         return self._selectedMode
     def setSelectedMode(self, mode):
         self._selectedMode.set(mode)
+
+    #pluggedIn
+    def getKeepCharging(self):
+        return self._keepCharging
+    def setKeepCharging(self, keepCharging):
+        self._keepCharging.set(keepCharging)

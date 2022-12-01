@@ -50,18 +50,18 @@ class Battery_Image(object):
         self._battery_cell_7.grid(row=7, column=2)
         self._battery_cell_8.grid(row=8, column=2)
         self._battery_cell_9.grid(row=9, column=2)
-        self._top_border.grid(row=0, column=2, padx=20)
+        self._top_border.grid(row=0, column=2, rowspan=3, padx=20)
         self._bottom_border.grid(row=0, column=2, rowspan=10, pady=32, padx=20)
 
     def interfaceBypassGrid(self):
         '''if in bypass mode change the position of the battery mode'''
-        self._battery_cell_0.configure(height=25, width=30)
-        self._top_border.grid(row=0, column=2, rowspan=3, padx=15, pady=20)
+        self._battery_cell_0.configure(height=15, width=30)
+        self._top_border.grid(row=0, column=2, rowspan=5, padx=15, pady=20)
 
     def interfaceAutoGrid(self):
         '''if swapped back to auto mode swap the image back to original position'''
         self._battery_cell_0.configure(height=15, width=30)
-        self._top_border.grid(row=0, column=2, rowspan=1, padx=20)
+        self._top_border.grid(row=0, column=2, rowspan=3, padx=20)
 
     def setCells(self, level):
         '''set the colours of the cells based on how much percentage the acutal battery has'''
