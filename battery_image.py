@@ -1,7 +1,14 @@
 import tkinter as tk
 
 class Battery_Image(object):
+    '''Battery_Image Class creates an image of the battery and its percentage'''
     def __init__(self, root):
+        '''
+        self._root - root window of tkinter
+        self._top_border - the border of the top of the battery image
+        self._bottom_border - the border of the bottom of the battery image
+        self._battery_cell_X - the layers of the battery
+        '''
         self._root = root
         self._top_border = tk.Frame(self._root, relief=tk.GROOVE, border=1)
         self._bottom_border = tk.Frame(self._root, relief=tk.GROOVE, border=1)
@@ -19,6 +26,7 @@ class Battery_Image(object):
         self.setGrid()
 
     def setSize(self):
+        '''method creates the size of each cell in the battery'''
         self._battery_cell_0.configure(height=15, width=30)
         self._battery_cell_1.configure(height=15, width=70)
         self._battery_cell_2.configure(height=15, width=70)
@@ -30,15 +38,8 @@ class Battery_Image(object):
         self._battery_cell_8.configure(height=15, width=70)
         self._battery_cell_9.configure(height=15, width=70)
 
-    def interfaceBypassGrid(self):
-        self._battery_cell_0.configure(height=25, width=30)
-        self._top_border.grid(row=0, column=2, rowspan=3, padx=15, pady=20)
-
-    def interfaceAutoGrid(self):
-        self._battery_cell_0.configure(height=15, width=30)
-        self._top_border.grid(row=0, column=2, rowspan=1, padx=20)
-
     def setGrid(self):
+        '''method sets the location of the battery image on the tkinter frame'''
         self._battery_cell_0.grid(row=0, column=2)
         self._battery_cell_1.grid(row=1, column=2)
         self._battery_cell_2.grid(row=2, column=2)
@@ -52,7 +53,18 @@ class Battery_Image(object):
         self._top_border.grid(row=0, column=2, padx=20)
         self._bottom_border.grid(row=0, column=2, rowspan=10, pady=32, padx=20)
 
+    def interfaceBypassGrid(self):
+        '''if in bypass mode change the position of the battery mode'''
+        self._battery_cell_0.configure(height=25, width=30)
+        self._top_border.grid(row=0, column=2, rowspan=3, padx=15, pady=20)
+
+    def interfaceAutoGrid(self):
+        '''if swapped back to auto mode swap the image back to original position'''
+        self._battery_cell_0.configure(height=15, width=30)
+        self._top_border.grid(row=0, column=2, rowspan=1, padx=20)
+
     def setCells(self, level):
+        '''set the colours of the cells based on how much percentage the acutal battery has'''
         if (level >= 95):
             self._battery_cell_0.configure(background="lime")
             self._battery_cell_1.configure(background="lime")
