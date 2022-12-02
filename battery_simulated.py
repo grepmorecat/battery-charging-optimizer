@@ -215,7 +215,7 @@ class Battery():
 
     def setUpperThreshold(self, threshold):
         '''method sets the max upper threshold a battery can charge up to'''
-        self._upperThreshold = threshold
+        self._upperThreshold = int(threshold)
 
     def getLowerThreshold(self):
         return self._lowerThreshold

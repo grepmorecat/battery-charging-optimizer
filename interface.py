@@ -5,7 +5,7 @@ from battery_simulated import Battery
 from tracker import Tracker
 from battery_image import Battery_Image
 
-class GUI(object):
+class Interface(object):
     '''
     GUI class creates a graphical interface for the user
     it provides the current battery level(percentage)
@@ -141,6 +141,6 @@ class GUI(object):
 if __name__ == "__main__":
     b = Battery()
     t = Tracker(b)
-    gui = GUI(b, t)
+    interface = Interface(b, t)
     b.stop()
     t.exit()
