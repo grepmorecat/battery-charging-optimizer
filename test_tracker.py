@@ -19,7 +19,6 @@ class TestTracker(unittest.TestCase):
     # unittest for the get_range method
     def test_get_range(self):
         t = Tracker(Battery())
-        self.assertEqual(t.get_range(), 65)
         t.set_range(72)
         self.assertEqual(t.get_range(), 72)
     # END test_get_range
