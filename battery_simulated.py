@@ -96,7 +96,8 @@ class Battery():
                 time.sleep(0.5)
                 break
             if (counter == 86400 or batteryLevel + charge >= upperThreshold):
-                batteryLevel = self._upperThreshold
+                if (batteryLevel <= upperThreshold):
+                    batteryLevel = self._upperThreshold
                 self.setInfo(int(batteryLevel), state)
                 time.sleep(0.5)
                 self.setPluggedIn(False)
@@ -161,9 +162,11 @@ class Battery():
                 break
             counter += 1
             if (self._notPluggedOut == True):
-                batteryLevel = self._upperThreshold
-                self.setInfo(int(batteryLevel), state)
-                time.sleep(0.5)
+                if (batteryLevel >= self._upperThreshold):
+                    self.setInfo(int(batteryLevel), state)
+                    time.sleep(0.5)
+                else:
+                    batteryLevel = self._upperThreshold
             else:
                 batteryLevel = self._upperThreshold
                 self.setInfo(int(batteryLevel), state)
@@ -212,7 +215,7 @@ class Battery():
 
     def setUpperThreshold(self, threshold):
         '''method sets the max upper threshold a battery can charge up to'''
-        self._upperThreshold = threshold
+        self._upperThreshold = int(threshold)
 
     def getLowerThreshold(self):
         return self._lowerThreshold
